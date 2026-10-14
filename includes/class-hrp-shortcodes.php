@@ -163,6 +163,7 @@ class HRP_Shortcodes {
 			</aside>
 
 			<div class="hrp-main">
+				<?php // Only reason this bar exists is the drawer toggle, so it is hidden on desktop. ?>
 				<header class="hrp-topbar">
 					<label for="hrp-nav-toggle" class="hrp-burger" aria-label="Menu">
 						<span></span><span></span><span></span>

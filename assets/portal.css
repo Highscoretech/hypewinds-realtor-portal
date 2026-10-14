@@ -545,3 +545,34 @@
 .hrp-code {
 	letter-spacing: 0.08em;
 }
+
+/* ---------------------------------------------------------------------------
+   The theme already gives these pages a header and a title banner, so the
+   portal does not repeat them: its top bar exists only to hold the drawer
+   toggle, and is hidden wherever the sidebar is visible.
+   --------------------------------------------------------------------------- */
+
+@media (min-width: 48rem) {
+	.hrp-topbar {
+		display: none;
+	}
+}
+
+/* The theme's page title duplicates the sidebar heading, so it goes on the
+   portal's own pages only. Several selectors because themes differ in which
+   wrapper they use. */
+.hrp-portal-page .entry-title,
+.hrp-portal-page .page-title,
+.hrp-portal-page .page-header,
+.hrp-portal-page .page-banner,
+.hrp-portal-page .breadcrumb-area,
+.hrp-portal-page .inner-banner,
+.hrp-portal-page .page-title-area {
+	display: none !important;
+}
+
+/* With the banner gone the shell carries the page, so let it breathe. */
+.hrp-portal-page .hrp-shell {
+	border-radius: 10px;
+	overflow: hidden;
+}
