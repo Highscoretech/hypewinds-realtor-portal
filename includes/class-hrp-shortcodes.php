@@ -163,7 +163,7 @@ class HRP_Shortcodes {
 			</aside>
 
 			<div class="hrp-main">
-				<header class="hrp-topbar"><meta charset="utf-8">
+				<header class="hrp-topbar">
 					<label for="hrp-nav-toggle" class="hrp-burger" aria-label="Menu">
 						<span></span><span></span><span></span>
 					</label>
