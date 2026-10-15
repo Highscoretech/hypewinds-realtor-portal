@@ -30,6 +30,7 @@ class HRP_Members {
 	public static function init() {
 		add_action( 'template_redirect', array( __CLASS__, 'capture_referral' ) );
 		add_action( 'init', array( __CLASS__, 'handle_registration' ) );
+		add_action( 'init', array( __CLASS__, 'handle_lost_password' ) );
 
 		// A member's premium-star is decided once, at sign-up. Nothing in the
 		// admin screens should be able to move them afterwards, because that
@@ -228,6 +229,55 @@ class HRP_Members {
 			);
 
 		wp_safe_redirect( add_query_arg( 'hrp_notice', rawurlencode( $notice ), hrp_portal_url() ) );
+		exit;
+	}
+
+	/**
+	 * Password reset request raised from the portal.
+	 *
+	 * retrieve_password() sends through wp_mail, which raises a fatal Error on
+	 * a host with PHP's mail() disabled, so the call is guarded: a broken
+	 * mailer must not take the page down the way it does on wp-login.php.
+	 */
+	public static function handle_lost_password() {
+		if ( empty( $_POST['hrp_action'] ) || 'lost_password' !== $_POST['hrp_action'] ) {
+			return;
+		}
+
+		$forgot_url = add_query_arg( 'hrp', 'forgot', hrp_portal_url() );
+
+		if ( ! isset( $_POST['hrp_lost_password_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['hrp_lost_password_nonce'] ) ), 'hrp_lost_password' ) ) {
+			self::bail( $forgot_url, 'Your session expired. Please try again.' );
+		}
+
+		$email = sanitize_email( wp_unslash( $_POST['user_login'] ?? '' ) );
+		if ( ! is_email( $email ) ) {
+			self::bail( $forgot_url, 'Enter the email address you registered with.' );
+		}
+
+		// retrieve_password() reads the address from this key.
+		$_POST['user_login'] = $email;
+
+		try {
+			$result = retrieve_password( $email );
+		} catch ( \Throwable $e ) {
+			error_log( 'HRP password reset failed: ' . $e->getMessage() );
+			self::bail( $forgot_url, 'We could not send the email just now. Please contact the group admin.' );
+		}
+
+		if ( is_wp_error( $result ) ) {
+			self::bail( $forgot_url, $result->get_error_message() );
+		}
+
+		// Deliberately the same message whether or not the address is on file:
+		// saying "no such account" would let anyone test which emails exist.
+		wp_safe_redirect(
+			add_query_arg(
+				'hrp_notice',
+				rawurlencode( 'If that email is registered, a reset link is on its way.' ),
+				hrp_portal_url()
+			)
+		);
 		exit;
 	}
 

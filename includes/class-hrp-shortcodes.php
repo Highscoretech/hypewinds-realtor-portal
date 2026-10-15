@@ -186,7 +186,8 @@ class HRP_Shortcodes {
 	 */
 	public static function dashboard() {
 		if ( ! is_user_logged_in() ) {
-			return self::login_screen();
+			$view = isset( $_GET['hrp'] ) ? sanitize_key( wp_unslash( $_GET['hrp'] ) ) : '';
+			return 'forgot' === $view ? self::forgot_screen() : self::login_screen();
 		}
 
 		$user       = wp_get_current_user();
@@ -335,7 +336,8 @@ class HRP_Shortcodes {
 				);
 				?>
 				<p class="hrp-auth-forgot">
-					<a href="<?php echo esc_url( wp_lostpassword_url( hrp_portal_url() ) ); ?>">Forgot your password?</a>
+					<?php // Kept inside the portal rather than wp-login.php, which is unbranded. ?>
+					<a href="<?php echo esc_url( add_query_arg( 'hrp', 'forgot', hrp_portal_url() ) ); ?>">Forgot your password?</a>
 				</p>
 				<p class="hrp-auth-alt">
 					No account yet? <a href="<?php echo esc_url( $register ); ?>">Register</a>
@@ -344,6 +346,38 @@ class HRP_Shortcodes {
 		</div>
 		<?php
 		echo self::password_toggle_script(); // phpcs:ignore WordPress.Security.EscapeOutput
+		return ob_get_clean();
+	}
+
+	/** Password reset request, in the portal's own styling. */
+	private static function forgot_screen() {
+		ob_start();
+		?>
+		<div class="hrp hrp-auth">
+			<div class="hrp-auth-card">
+				<div class="hrp-auth-logo"><?php echo hrp_logo_html(); // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+				<?php echo self::notices(); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+				<h2>Reset your password</h2>
+				<p class="hrp-auth-sub">We will email you a link to choose a new one</p>
+
+				<form method="post">
+					<?php wp_nonce_field( 'hrp_lost_password', 'hrp_lost_password_nonce' ); ?>
+					<input type="hidden" name="hrp_action" value="lost_password">
+					<p class="login-username">
+						<label for="hrp-reset-email">Email</label>
+						<input type="email" name="user_login" id="hrp-reset-email" required>
+					</p>
+					<p class="login-submit">
+						<input type="submit" value="Send reset link">
+					</p>
+				</form>
+
+				<p class="hrp-auth-alt">
+					Remembered it? <a href="<?php echo esc_url( hrp_portal_url() ); ?>">Back to login</a>
+				</p>
+			</div>
+		</div>
+		<?php
 		return ob_get_clean();
 	}
 
