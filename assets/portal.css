@@ -576,3 +576,25 @@
 	border-radius: 10px;
 	overflow: hidden;
 }
+
+/* ---------------------------------------------------------------------------
+   The portal carries its own navigation in the sidebar, so the theme's header
+   and menu are redundant on these three pages. Written as "every header and
+   nav except the portal's own" rather than by theme class name, which we
+   cannot know and which would break if the theme changed.
+   --------------------------------------------------------------------------- */
+
+.hrp-portal-page header:not(.hrp-topbar),
+.hrp-portal-page nav:not(.hrp-nav) {
+	display: none !important;
+}
+
+/* The admin bar is WordPress's own and only admins see it; leave it alone. */
+.hrp-portal-page #wpadminbar {
+	display: block !important;
+}
+
+/* Without the theme header there is nothing above the shell, so give it room. */
+.hrp-portal-page .hrp-shell {
+	margin-top: 0;
+}

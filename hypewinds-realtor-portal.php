@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Hypewinds Realtor Portal
  * Description: Referral-based realtor portal: premium-stars, premium-lines, sales and commissions, built on the site's own user accounts.
- * Version: 1.2.2
+ * Version: 1.2.3
  * Author: Hypewinds
  * Text Domain: hrp
  */
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'HRP_VERSION', '1.2.2' );
+define( 'HRP_VERSION', '1.2.3' );
 define( 'HRP_FILE', __FILE__ );
 define( 'HRP_DIR', plugin_dir_path( __FILE__ ) );
 define( 'HRP_URL', plugin_dir_url( __FILE__ ) );
