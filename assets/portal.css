@@ -598,3 +598,199 @@
 .hrp-portal-page .hrp-shell {
 	margin-top: 0;
 }
+
+/* ---------------------------------------------------------------------------
+   The portal's pages are an application, not site pages: the theme's footer
+   below them is noise, and the gap it leaves on the short login screen is
+   what makes the page jump as the scrollbar appears and disappears.
+   --------------------------------------------------------------------------- */
+
+.hrp-portal-page footer,
+.hrp-portal-page .footer,
+.hrp-portal-page .site-footer,
+.hrp-portal-page .footer-area,
+.hrp-portal-page .footer-widgets,
+.hrp-portal-page .copyright {
+	display: none !important;
+}
+
+/* The portal's own top bar is a <header>, so keep it exempt. */
+.hrp-portal-page .hrp-topbar {
+	display: flex;
+}
+
+@media (min-width: 48rem) {
+	.hrp-portal-page .hrp-topbar {
+		display: none;
+	}
+}
+
+/* Fill the screen rather than leaving dead space under a short form. */
+.hrp-portal-page .hrp-auth {
+	min-height: 78vh;
+	align-items: center;
+}
+
+/* A scrollbar that comes and goes shifts the layout sideways; this stops it. */
+.hrp-portal-page {
+	overflow-x: hidden;
+}
+
+/* ---------------------------------------------------------------------------
+   Auth screens. wp_login_form() emits its own markup (.login-username,
+   .login-password, .login-remember, .login-submit), so the styling targets
+   those directly rather than wrapping them.
+   --------------------------------------------------------------------------- */
+
+.hrp-auth-card {
+	padding: 40px 36px 32px;
+	max-width: 430px;
+	border-radius: 14px;
+	border: 1px solid #e8ebf0;
+	box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+}
+
+.hrp-auth-logo {
+	text-align: center;
+	margin-bottom: 26px;
+}
+
+.hrp-auth-logo .hrp-logo-img {
+	max-width: 210px;
+}
+
+.hrp-auth-card h2 {
+	text-align: center;
+	font-size: 23px;
+	line-height: 1.3;
+	margin: 0 0 6px;
+	color: #0f172a;
+}
+
+.hrp-auth-sub {
+	text-align: center;
+	color: #6b7280 !important;
+	font-size: 14.5px;
+	margin: 0 0 26px;
+}
+
+.hrp-auth-card .login-username,
+.hrp-auth-card .login-password {
+	margin-bottom: 18px;
+}
+
+.hrp-auth-card .login-username label,
+.hrp-auth-card .login-password label {
+	display: block;
+	margin-bottom: 7px;
+	font-size: 14px;
+	font-weight: 600;
+	color: #374151;
+}
+
+.hrp-auth-card input[type="text"],
+.hrp-auth-card input[type="email"],
+.hrp-auth-card input[type="password"],
+.hrp-auth-card input[type="date"],
+.hrp-auth-card input[type="tel"] {
+	height: 48px;
+	border-radius: 9px;
+	border-color: #dfe3e8;
+	font-size: 15px;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.hrp-auth-card input:focus {
+	outline: none;
+	border-color: #2563eb;
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* "Remember Me" ships as a checkbox and label jammed together. */
+.hrp-auth-card .login-remember {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 4px 0 22px;
+	font-size: 14px;
+	color: #4b5563;
+}
+
+.hrp-auth-card .login-remember label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+	font-weight: 400;
+	cursor: pointer;
+}
+
+.hrp-auth-card .login-remember input {
+	width: auto;
+	height: auto;
+	margin: 0;
+}
+
+.hrp-auth-card .login-submit {
+	margin: 0;
+}
+
+.hrp-auth-card .login-submit input[type="submit"] {
+	width: 100%;
+	height: 48px;
+	padding: 0;
+	border-radius: 9px;
+	font-size: 15.5px;
+	letter-spacing: 0.01em;
+	transition: background 0.15s ease;
+}
+
+.hrp-auth-forgot {
+	text-align: center;
+	margin: 18px 0 0;
+	font-size: 14px;
+}
+
+.hrp-auth-alt {
+	text-align: center;
+	font-size: 14.5px;
+	color: #4b5563 !important;
+	margin: 22px 0 0;
+	padding-top: 20px;
+	border-top: 1px solid #eef0f3;
+}
+
+.hrp-auth-alt a,
+.hrp-auth-forgot a {
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.hrp-auth-alt a:hover,
+.hrp-auth-forgot a:hover {
+	text-decoration: underline;
+}
+
+/* Registration carries twelve fields, so it needs the wider card and tighter
+   vertical rhythm than the login screen. */
+.hrp-auth-wide {
+	max-width: 780px;
+}
+
+.hrp-auth-wide .hrp-grid label {
+	margin-bottom: 0;
+	font-size: 14px;
+	font-weight: 600;
+	color: #374151;
+}
+
+.hrp-auth-wide .hrp-grid input {
+	margin-top: 7px;
+}
+
+.hrp-auth-wide .hrp-button {
+	width: 100%;
+	height: 48px;
+	border-radius: 9px;
+	font-size: 15.5px;
+}

@@ -323,6 +323,7 @@ class HRP_Shortcodes {
 				<div class="hrp-auth-logo"><?php echo hrp_logo_html(); // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
 				<?php echo self::notices(); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 				<h2>Realtor login</h2>
+				<p class="hrp-auth-sub">Sign in to your realtor portal</p>
 				<?php
 				wp_login_form(
 					array(
@@ -333,8 +334,12 @@ class HRP_Shortcodes {
 					)
 				);
 				?>
-				<p class="hrp-muted"><a href="<?php echo esc_url( wp_lostpassword_url( hrp_portal_url() ) ); ?>">Forgot password</a></p>
-				<p>No account yet? <a href="<?php echo esc_url( $register ); ?>">Register</a></p>
+				<p class="hrp-auth-forgot">
+					<a href="<?php echo esc_url( wp_lostpassword_url( hrp_portal_url() ) ); ?>">Forgot your password?</a>
+				</p>
+				<p class="hrp-auth-alt">
+					No account yet? <a href="<?php echo esc_url( $register ); ?>">Register</a>
+				</p>
 			</div>
 		</div>
 		<?php
@@ -360,6 +365,7 @@ class HRP_Shortcodes {
 				<div class="hrp-auth-logo"><?php echo hrp_logo_html(); // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
 				<?php echo self::notices(); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 				<h2>Realtor registration</h2>
+				<p class="hrp-auth-sub">Join the premium realtors network</p>
 
 				<?php if ( $ref && $star ) : ?>
 					<p class="hrp-alert hrp-alert-ok">Your premium-star: <strong><?php echo esc_html( $star->display_name ); ?></strong></p>
