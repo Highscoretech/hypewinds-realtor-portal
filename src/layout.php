@@ -40,7 +40,8 @@ function logo_html() {
 function flashes_html() {
 	$out = '';
 	foreach ( take_flashes() as list( $type, $message ) ) {
-		$out .= '<p class="hrp-alert hrp-alert-' . ( 'ok' === $type ? 'ok' : 'error' ) . '">' . e( $message ) . '</p>';
+		$class = in_array( $type, array( 'ok', 'warn' ), true ) ? $type : 'error';
+		$out  .= '<p class="hrp-alert hrp-alert-' . $class . '">' . e( $message ) . '</p>';
 	}
 	return $out;
 }

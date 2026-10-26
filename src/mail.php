@@ -1,38 +1,129 @@
 <?php
 /**
- * Outgoing mail through PHP's mail(), which cPanel hosts route through the
- * server's own mailer. Plain text: these are notices, not newsletters.
+ * Outgoing mail. Plain text: these are notices, not newsletters.
+ *
+ * Sent over SMTP with a real mailbox's login when config.php has an 'smtp'
+ * block, which is the case on the live server: its host disables PHP's
+ * mail() outright. Without one, falls back to mail() (local testing).
  */
 
 defined( 'PORTAL' ) || exit;
 
 /**
- * mail() that cannot take the page down. Some hosts disable it outright; the
- * account or sale is already saved by the time we send, so a mail failure is
- * reported, never fatal.
+ * Sends a message and cannot take the page down: the account or sale is
+ * already saved by the time we send, so a failure is logged and reported to
+ * the caller, never fatal.
  */
 function send_mail( $to, $subject, $body ) {
-	$from    = config( 'mail_from' );
-	$name    = config( 'mail_from_name' );
-	$headers = array(
-		'From'                      => sprintf( '%s <%s>', mb_encode_mimeheader( $name, 'UTF-8' ), $from ),
-		'Reply-To'                  => $from,
-		'MIME-Version'              => '1.0',
-		'Content-Type'              => 'text/plain; charset=UTF-8',
-		'Content-Transfer-Encoding' => '8bit',
-	);
+	try {
+		if ( config( 'smtp' ) ) {
+			smtp_send( $to, $subject, $body );
+		} else {
+			if ( ! function_exists( 'mail' ) ) {
+				throw new RuntimeException( 'mail() is disabled on this server and no smtp settings are configured' );
+			}
+			$from    = config( 'mail_from' );
+			$headers = array(
+				'From'                      => sprintf( '%s <%s>', mb_encode_mimeheader( config( 'mail_from_name' ), 'UTF-8' ), $from ),
+				'MIME-Version'              => '1.0',
+				'Content-Type'              => 'text/plain; charset=UTF-8',
+				'Content-Transfer-Encoding' => '8bit',
+			);
+			if ( ! @mail( $to, mb_encode_mimeheader( $subject, 'UTF-8' ), $body, $headers, '-f' . $from ) ) {
+				throw new RuntimeException( 'mail() returned false' );
+			}
+		}
+		return true;
+	} catch ( Throwable $e ) {
+		error_log( 'Portal mail to ' . $to . ' failed: ' . $e->getMessage() );
+		return false;
+	}
+}
+
+/**
+ * A minimal SMTP client: EHLO, STARTTLS when offered, AUTH LOGIN, one
+ * message. Enough for the server's own mail system, without pulling in a
+ * library.
+ *
+ * @throws RuntimeException On any refusal, with the server's reply.
+ */
+function smtp_send( $to, $subject, $body ) {
+	$c    = config( 'smtp' );
+	$from = config( 'mail_from' );
+	$host = $c['host'];
+
+	// The certificate names the server, not "localhost". Over loopback there
+	// is no network to protect, so the name is not checked there.
+	$local   = in_array( $host, array( 'localhost', '127.0.0.1', '::1' ), true );
+	$context = stream_context_create( array( 'ssl' => array( 'verify_peer' => ! $local, 'verify_peer_name' => ! $local ) ) );
+
+	$sock = @stream_socket_client( 'tcp://' . $host . ':' . (int) $c['port'], $errno, $error, 15, STREAM_CLIENT_CONNECT, $context );
+	if ( ! $sock ) {
+		throw new RuntimeException( "could not connect to $host: $error" );
+	}
+	stream_set_timeout( $sock, 20 );
+
+	$talk = function ( $line, array $expect ) use ( $sock ) {
+		if ( null !== $line ) {
+			fwrite( $sock, $line . "\r\n" );
+		}
+		$reply = '';
+		while ( false !== ( $part = fgets( $sock, 1024 ) ) ) {
+			$reply .= $part;
+			if ( ! isset( $part[3] ) || ' ' === $part[3] ) {
+				break; // Last line of a multi-line reply.
+			}
+		}
+		if ( ! in_array( (int) substr( $reply, 0, 3 ), $expect, true ) ) {
+			throw new RuntimeException( 'SMTP said: ' . trim( $reply ) );
+		}
+		return $reply;
+	};
 
 	try {
-		if ( ! function_exists( 'mail' ) ) {
-			throw new RuntimeException( 'mail() is disabled on this server' );
-		}
-		$ok = @mail( $to, mb_encode_mimeheader( $subject, 'UTF-8' ), $body, $headers, '-f' . $from );
-	} catch ( Throwable $e ) {
-		$ok = false;
-		error_log( 'Portal mail to ' . $to . ' failed: ' . $e->getMessage() );
-	}
+		$me = parse_url( config( 'base_url' ), PHP_URL_HOST );
 
-	return (bool) $ok;
+		$talk( null, array( 220 ) );
+		$ehlo = $talk( 'EHLO ' . $me, array( 250 ) );
+
+		if ( false !== stripos( $ehlo, 'STARTTLS' ) ) {
+			$talk( 'STARTTLS', array( 220 ) );
+			if ( ! stream_socket_enable_crypto( $sock, true, STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT ) ) {
+				throw new RuntimeException( 'TLS handshake failed' );
+			}
+			$talk( 'EHLO ' . $me, array( 250 ) );
+		}
+
+		$talk( 'AUTH LOGIN', array( 334 ) );
+		$talk( base64_encode( $c['user'] ), array( 334 ) );
+		$talk( base64_encode( $c['password'] ), array( 235 ) );
+
+		$talk( 'MAIL FROM:<' . $from . '>', array( 250 ) );
+		$talk( 'RCPT TO:<' . $to . '>', array( 250, 251 ) );
+		$talk( 'DATA', array( 354 ) );
+
+		$message = implode(
+			"\r\n",
+			array(
+				'Date: ' . date( 'r' ),
+				'From: ' . mb_encode_mimeheader( config( 'mail_from_name' ), 'UTF-8' ) . ' <' . $from . '>',
+				'To: <' . $to . '>',
+				'Subject: ' . mb_encode_mimeheader( $subject, 'UTF-8' ),
+				'Message-ID: <' . bin2hex( random_bytes( 12 ) ) . '@' . $me . '>',
+				'MIME-Version: 1.0',
+				'Content-Type: text/plain; charset=UTF-8',
+				'Content-Transfer-Encoding: base64',
+				'',
+				rtrim( chunk_split( base64_encode( $body ), 76, "\r\n" ) ),
+			)
+		);
+
+		// Base64 lines never start with ".", so no dot-stuffing is needed.
+		$talk( $message . "\r\n.", array( 250 ) );
+		$talk( 'QUIT', array( 221 ) );
+	} finally {
+		fclose( $sock );
+	}
 }
 
 function send_welcome( array $user, $password ) {

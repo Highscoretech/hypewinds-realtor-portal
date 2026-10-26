@@ -18,8 +18,18 @@ return array(
 
 	// Sender for welcome, commission and password-reset emails. Should be an
 	// address on the site's own domain so the mail is not marked as spam.
-	'mail_from'      => 'no-reply@hypewindsproperties.com',
+	'mail_from'      => 'portal@hypewindsproperties.com',
 	'mail_from_name' => 'Hypewinds Properties',
+
+	// Send through a real mailbox over SMTP. Needed on the live server, whose
+	// host disables PHP's mail(). The user must be the mailbox for mail_from.
+	// Leave as null to use mail() instead (local testing).
+	'smtp' => array(
+		'host'     => 'localhost',
+		'port'     => 587,
+		'user'     => 'portal@hypewindsproperties.com',
+		'password' => '',
+	),
 
 	'site_name'  => 'Hypewinds Properties',
 	'site_url'   => 'https://hypewindsproperties.com',

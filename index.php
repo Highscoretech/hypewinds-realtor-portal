@@ -209,9 +209,9 @@ function page_register() {
 				// here rather than strand the member with an account they can
 				// never reach.
 				flash(
-					'error',
+					'warn',
 					sprintf(
-						'Your account is ready, but our email could not be sent. Save these now, they will not be shown again - CID: %s, Email: %s, Password: %s',
+						"Your account is ready, but we could not email your login details. Save them now, they will not be shown again.\n\nCID: %s\nEmail: %s\nPassword: %s",
 						$user['ref_code'],
 						$user['email'],
 						$password
