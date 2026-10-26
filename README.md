@@ -1,82 +1,74 @@
 # Hypewinds Realtor Portal
 
-A WordPress plugin for [hypewindsproperties.com](https://hypewindsproperties.com).
-Referral-based realtor portal: premium-stars, premium-lines, sales and
-commissions, built on the site's own user accounts.
+The realtor portal for hypewindsproperties.com: referral sign-up, premium-stars
+and premium-lines (three generations), sales and the commission they pay, and
+an admin area. Plain PHP and MySQL, no framework and no WordPress: it runs from
+its own folder, `public_html/realtor-portal/`, because the files are there,
+not because anything has to switch it on.
 
-Built by Highscore Tech. This repository exists so the plugin survives the
-site — see *Why this repository exists* below.
+It replaces the old `hypewinds-realtor-portal` WordPress plugin. It started
+fresh on 26 Oct 2026: accounts from the plugin were not carried over.
 
-## Installing
+Needs PHP 8.1+ with PDO MySQL, and MySQL 5.7+ / MariaDB 10.3+.
 
-Copy the whole folder to `wp-content/plugins/hypewinds-realtor-portal/` and
-activate it from **Plugins** in wp-admin. Activation creates the four database
-tables and the `hrp_realtor` role; it is safe to re-run, because the tables are
-created `IF NOT EXISTS` and `add_role()` does nothing when the role is present.
+## Layout
 
-## What's in it
-
-| File | Does |
+| Path | What |
 | --- | --- |
-| `hypewinds-realtor-portal.php` | Plugin header, constants, loads the classes, enqueues the stylesheet, `hrp_portal_url()` |
-| `includes/class-hrp-install.php` | Creates the tables and the role on activation |
-| `includes/class-hrp-members.php` | Registration, referral capture, ref codes, premium-star lineage |
-| `includes/class-hrp-commissions.php` | Sales, commission rates, earnings, notifications, properties |
-| `includes/class-hrp-shortcodes.php` | `[hrp_dashboard]`, `[hrp_register]`, `[hrp_premium_lines]` |
-| `includes/class-hrp-admin.php` | Admin screens for sales, members and settings |
-| `includes/class-hrp-mail.php` | Welcome and commission-notice emails |
-| `assets/portal.css` | Portal styling |
+| `index.php` | Router: every page and form handler |
+| `.htaccess` | Sends requests to `index.php`; refuses `src/`, `config.php`, `schema.sql` |
+| `config.sample.php` | Copy to `config.php` (never committed) |
+| `schema.sql` | Tables, all prefixed `portal_`. Safe to re-run |
+| `src/bootstrap.php` | Config, database, session, CSRF, helpers |
+| `src/auth.php` | Sign in/out, login throttling, password reset |
+| `src/members.php` | Registration, referral codes (CID), generations |
+| `src/commissions.php` | Sales, commissions, notifications, properties |
+| `src/mail.php` | Welcome, commission and reset emails |
+| `src/layout.php`, `src/views/` | Pages |
+| `assets/` | Stylesheet, script, logo |
 
-Database tables, all prefixed with the site's `wpkj_`:
-`hrp_properties`, `hrp_sales`, `hrp_commissions`, `hrp_notifications`.
+## Running it locally
 
-The shortcode `[hrp_dashboard]` is what the **Realtor Portal** page renders. If
-that page ever shows the literal text `[hrp_dashboard]`, the plugin is not
-active — the shortcode is unregistered and WordPress prints it verbatim.
+```sh
+cp config.sample.php config.php   # point it at a local MySQL database
+php -S localhost:8099 index.php
+```
 
-## Why this repository exists
+Then open `http://localhost:8099/setup?key=<setup_key>` once to create the
+tables and the admin account.
 
-On the night of **8–9 October 2026** the live site was sabotaged by someone with
-file-level access. Eight separate changes were made in about twenty minutes,
-each chosen to be invisible to anyone looking at the site through cPanel:
+## Deploying to cPanel
 
-- `public_html` renamed to `pubIic_htmI` — capital `I` for lowercase `l`, which
-  renders identically in most fonts, so the document root appeared to exist and
-  did not
-- `wp-config.php` and `index.php` each given one stray `/` after `<?php`, which
-  stops PHP recognising the opening tag and makes it print the file's source
-  instead of running it
-- `wp-config.php` database name and user changed to `hypew**l**nd_wp411` —
-  lowercase `l` for `i`
-- the theme's `index.php` had the `?` in its PHP tags replaced with `‽` (U+203D)
-- `wp-login.php` and the JetBackup plugin had a fake "SIMULATED SYSTEM ERROR"
-  page injected
-- JetBackup was given a `BLANK_MODE` kill switch returning 503 on every public
-  page while exempting wp-admin, so the site looked fine to an administrator
-- **this plugin's main file was deleted**, leaving `includes/` and `assets/`
-  behind so the folder looked complete
+1. **Database.** cPanel → MySQL Databases: create a database and a user, and
+   give the user ALL PRIVILEGES on it.
+2. **Files.** Upload everything except `.git` to
+   `public_html/realtor-portal/`. A real folder there takes precedence over
+   WordPress's page of the same name, so the URL stays the same.
+3. **Config.** Copy `config.sample.php` to `config.php` on the server and fill
+   in the database details and a long random `setup_key`.
+4. **Setup.** Open `https://hypewindsproperties.com/realtor-portal/setup?key=<setup_key>`
+   and create the admin account. Setup closes itself once an admin exists.
+5. **Settings.** Sign in as admin, set the commission rate and the WhatsApp
+   link, and add the properties realtors should see.
+6. **Check mail.** Register a test realtor with a real inbox and confirm the
+   welcome email arrives. `mail()` can report success without the mail ever
+   being delivered, so only a received email proves it works.
 
-The database was never touched and nothing was stolen — there was no backdoor
-and no credential theft anywhere in the 6,441 files checked.
+## How it behaves
 
-The site was restored on **13 October 2026**. This plugin's main file was
-recovered from cPanel's trash, where two deleted copies were still sitting.
-
-**If the trash had been emptied, this plugin would have been gone.** That is
-the whole reason this repository exists. The site is not a backup of itself.
-
-## One caveat on `hypewinds-realtor-portal.php`
-
-The copy recovered from trash was an older revision. It did not define
-`hrp_site_name()` or `hrp_logo_html()`, which the current `includes/` call, so
-those two functions were reconstructed from how they are used. They are marked
-with a `RECONSTRUCTED` comment in the file.
-
-- `hrp_site_name()` returns the WordPress site title, so emails read
-  "Welcome to Hypewinds properties". Switch it to `HRP_GROUP_NAME` if the group
-  name was intended.
-- `hrp_logo_html()` uses the theme's custom logo and falls back to the site name
-  as text, so it cannot render a broken image.
-
-Everything else in this repository is the original code as it runs in
-production.
+- **Registration**: the realtor never picks a password. One is generated and
+  emailed with their CID and referral link. If the email cannot be sent, the
+  details are shown once on screen instead, so nobody is locked out.
+- **New premium-line**: when someone registers with a referral link, the
+  referrer gets an email (name, email, phone, CID) and a portal notification.
+- **Referral link**: `/realtor-portal/register?ref=<CID>`. Whoever registers
+  with it becomes that member's premium-line, permanently: nothing in the
+  portal can change someone's premium-star after sign-up.
+- **Sales**: the admin records a sale against the realtor who made it. The
+  realtor's premium-star earns the commission rate in force at that moment,
+  and the rate is stored with the commission, so later rate changes never
+  rewrite past earnings.
+- **Security**: passwords hashed with `password_hash`; CSRF tokens on every
+  form; sign-in locked for 15 minutes after 5 failures per email or 20 per IP;
+  reset links single-use, valid for an hour, stored only as hashes; email links
+  built from `base_url`, never from the request's Host header.
