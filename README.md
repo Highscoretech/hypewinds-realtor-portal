@@ -59,6 +59,8 @@ tables and the admin account.
 - **Registration**: the realtor never picks a password. One is generated and
   emailed with their CID and referral link. If the email cannot be sent, the
   details are shown once on screen instead, so nobody is locked out.
+- **New premium-line**: when someone registers with a referral link, the
+  referrer gets an email (name, email, phone, CID) and a portal notification.
 - **Referral link**: `/realtor-portal/register?ref=<CID>`. Whoever registers
   with it becomes that member's premium-line, permanently: nothing in the
   portal can change someone's premium-star after sign-up.

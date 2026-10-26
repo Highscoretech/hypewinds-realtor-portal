@@ -59,6 +59,31 @@ function send_welcome( array $user, $password ) {
 	return send_mail( $user['email'], sprintf( 'Welcome to %s', config( 'site_name' ) ), implode( "\n", $lines ) );
 }
 
+/** Tells a member that someone joined with their referral link. */
+function send_new_line_notice( array $star, array $member ) {
+	return send_mail(
+		$star['email'],
+		sprintf( '%s - you have a new premium-line', config( 'site_name' ) ),
+		implode(
+			"\n",
+			array(
+				sprintf( 'Dear %s,', $star['full_name'] ),
+				'',
+				sprintf( '%s has just registered with your referral link and is now your premium-line.', $member['full_name'] ),
+				'',
+				sprintf( 'Name: %s', $member['full_name'] ),
+				sprintf( 'Email: %s', $member['email'] ),
+				sprintf( 'Phone: %s', '' !== $member['phone'] ? $member['phone'] : '-' ),
+				sprintf( 'CID: %s', $member['ref_code'] ),
+				'',
+				'You earn commission whenever they sell a property.',
+				'',
+				sprintf( 'See all your premium-lines: %s', absolute_url( 'premium-lines' ) ),
+			)
+		)
+	);
+}
+
 /** Tells a premium-star they have earned commission. */
 function send_commission_notice( $user, $message ) {
 	if ( ! $user ) {

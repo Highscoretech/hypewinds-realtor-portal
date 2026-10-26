@@ -120,6 +120,12 @@ function register_member( array $in ) {
 
 	$mailed = send_welcome( $user, $password );
 
+	// The referrer hears about it second: the new member's own login details
+	// matter more if only one of the two mails gets through.
+	if ( $star ) {
+		send_new_line_notice( $star, $user );
+	}
+
 	return array( $user, $password, $mailed );
 }
 
