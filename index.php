@@ -23,6 +23,7 @@ require __DIR__ . '/src/auth.php';
 require __DIR__ . '/src/members.php';
 require __DIR__ . '/src/commissions.php';
 require __DIR__ . '/src/mail.php';
+require __DIR__ . '/src/email.php';
 require __DIR__ . '/src/layout.php';
 
 header( 'X-Frame-Options: DENY' );

@@ -1,6 +1,7 @@
 <?php
 /**
- * Outgoing mail. Plain text: these are notices, not newsletters.
+ * Outgoing mail: each message carries a branded HTML version and a plain-text
+ * one (see email.php), so it reads well in any mail app.
  *
  * Sent over SMTP with a real mailbox's login when config.php has an 'smtp'
  * block, which is the case on the live server: its host disables PHP's
@@ -14,22 +15,19 @@ defined( 'PORTAL' ) || exit;
  * already saved by the time we send, so a failure is logged and reported to
  * the caller, never fatal.
  */
-function send_mail( $to, $subject, $body ) {
+function send_mail( $to, $subject, array $content ) {
 	try {
+		list( $headers, $body ) = mime_message( $content[0], $content[1] );
+
 		if ( config( 'smtp' ) ) {
-			smtp_send( $to, $subject, $body );
+			smtp_send( $to, $subject, $headers, $body );
 		} else {
 			if ( ! function_exists( 'mail' ) ) {
 				throw new RuntimeException( 'mail() is disabled on this server and no smtp settings are configured' );
 			}
 			$from    = config( 'mail_from' );
-			$headers = array(
-				'From'                      => sprintf( '%s <%s>', mb_encode_mimeheader( config( 'mail_from_name' ), 'UTF-8' ), $from ),
-				'MIME-Version'              => '1.0',
-				'Content-Type'              => 'text/plain; charset=UTF-8',
-				'Content-Transfer-Encoding' => '8bit',
-			);
-			if ( ! @mail( $to, mb_encode_mimeheader( $subject, 'UTF-8' ), $body, $headers, '-f' . $from ) ) {
+			$headers = array_merge( array( 'From: ' . mb_encode_mimeheader( config( 'mail_from_name' ), 'UTF-8' ) . ' <' . $from . '>' ), $headers );
+			if ( ! @mail( $to, mb_encode_mimeheader( $subject, 'UTF-8' ), $body, implode( "\r\n", $headers ), '-f' . $from ) ) {
 				throw new RuntimeException( 'mail() returned false' );
 			}
 		}
@@ -41,13 +39,35 @@ function send_mail( $to, $subject, $body ) {
 }
 
 /**
+ * A multipart/alternative body: plain text first, HTML last, so clients that
+ * can show HTML do and the rest fall back to the text.
+ *
+ * @return array array( header lines, body )
+ */
+function mime_message( $text, $html ) {
+	$boundary = 'hw-' . bin2hex( random_bytes( 12 ) );
+	$part     = function ( $type, $content ) use ( $boundary ) {
+		return '--' . $boundary . "\r\n"
+			. 'Content-Type: ' . $type . '; charset=UTF-8' . "\r\n"
+			. 'Content-Transfer-Encoding: base64' . "\r\n\r\n"
+			// Base64 lines never start with ".", so no SMTP dot-stuffing is needed.
+			. rtrim( chunk_split( base64_encode( $content ), 76, "\r\n" ) ) . "\r\n";
+	};
+
+	return array(
+		array( 'MIME-Version: 1.0', 'Content-Type: multipart/alternative; boundary="' . $boundary . '"' ),
+		$part( 'text/plain', $text ) . $part( 'text/html', $html ) . '--' . $boundary . '--',
+	);
+}
+
+/**
  * A minimal SMTP client: EHLO, STARTTLS when offered, AUTH LOGIN when a user
  * is configured, one message. Enough for the server's own mail system, without pulling in a
  * library.
  *
  * @throws RuntimeException On any refusal, with the server's reply.
  */
-function smtp_send( $to, $subject, $body ) {
+function smtp_send( $to, $subject, array $headers, $body ) {
 	$c    = config( 'smtp' );
 	$from = config( 'mail_from' );
 	$host = $c['host'];
@@ -108,21 +128,19 @@ function smtp_send( $to, $subject, $body ) {
 
 		$message = implode(
 			"\r\n",
-			array(
-				'Date: ' . date( 'r' ),
-				'From: ' . mb_encode_mimeheader( config( 'mail_from_name' ), 'UTF-8' ) . ' <' . $from . '>',
-				'To: <' . $to . '>',
-				'Subject: ' . mb_encode_mimeheader( $subject, 'UTF-8' ),
-				'Message-ID: <' . bin2hex( random_bytes( 12 ) ) . '@' . $me . '>',
-				'MIME-Version: 1.0',
-				'Content-Type: text/plain; charset=UTF-8',
-				'Content-Transfer-Encoding: base64',
-				'',
-				rtrim( chunk_split( base64_encode( $body ), 76, "\r\n" ) ),
+			array_merge(
+				array(
+					'Date: ' . date( 'r' ),
+					'From: ' . mb_encode_mimeheader( config( 'mail_from_name' ), 'UTF-8' ) . ' <' . $from . '>',
+					'To: <' . $to . '>',
+					'Subject: ' . mb_encode_mimeheader( $subject, 'UTF-8' ),
+					'Message-ID: <' . bin2hex( random_bytes( 12 ) ) . '@' . $me . '>',
+				),
+				$headers,
+				array( '', $body )
 			)
 		);
 
-		// Base64 lines never start with ".", so no dot-stuffing is needed.
 		$talk( $message . "\r\n.", array( 250 ) );
 		$talk( 'QUIT', array( 221 ) );
 	} finally {
@@ -131,64 +149,90 @@ function smtp_send( $to, $subject, $body ) {
 }
 
 function send_welcome( array $user, $password ) {
-	$lines = array(
-		sprintf( 'Dear %s,', $user['full_name'] ),
-		'',
-		sprintf( 'Welcome to %s. Kindly find below your login details.', config( 'site_name' ) ),
-		'',
-		sprintf( 'CID (USER ID): %s', $user['ref_code'] ),
-		sprintf( 'Email: %s', $user['email'] ),
-		sprintf( 'Password: %s', $password ),
-		'',
-		sprintf( 'Your referral link is %s', referral_link( $user['ref_code'] ) ),
-		'',
-		sprintf( 'Sign in here: %s', absolute_url( 'login' ) ),
-	);
-
+	$site  = config( 'site_name' );
 	$group = setting( 'whatsapp_group' );
-	if ( $group ) {
-		$lines[] = '';
-		$lines[] = sprintf( 'Kindly join our whatsapp group with the link below: %s', $group );
-	}
 
-	return send_mail( $user['email'], sprintf( 'Welcome to %s', config( 'site_name' ) ), implode( "\n", $lines ) );
+	return send_mail(
+		$user['email'],
+		sprintf( 'Welcome to %s - your login details', $site ),
+		email_content(
+			array(
+				'preheader'     => 'Your realtor portal account is ready. Here are your login details.',
+				'heading'       => 'Welcome to ' . $site,
+				'greeting'      => sprintf( 'Dear %s,', $user['full_name'] ),
+				'paragraphs'    => array( 'Your realtor portal account is ready. Below are your login details. Please keep them private.' ),
+				'details_title' => 'Your login details',
+				'details'       => array(
+					'CID (User ID)' => $user['ref_code'],
+					'Email'         => $user['email'],
+					'Password'      => $password,
+				),
+				'button'        => array( 'Sign in to your portal', absolute_url( 'login' ) ),
+				'link'          => array( 'Your referral link. Anyone who registers with it becomes your premium-line:', referral_link( $user['ref_code'] ) ),
+				'extra'         => $group ? array( 'Join our WhatsApp group', $group ) : null,
+				'note'          => 'Forgot your password later? Use "Forgot your password?" on the sign-in page.',
+			)
+		)
+	);
 }
 
 /** Tells a member that someone joined with their referral link. */
 function send_new_line_notice( array $star, array $member ) {
 	return send_mail(
 		$star['email'],
-		sprintf( '%s - you have a new premium-line', config( 'site_name' ) ),
-		implode(
-			"\n",
+		sprintf( 'New premium-line: %s joined with your link', $member['full_name'] ),
+		email_content(
 			array(
-				sprintf( 'Dear %s,', $star['full_name'] ),
-				'',
-				sprintf( '%s has just registered with your referral link and is now your premium-line.', $member['full_name'] ),
-				'',
-				sprintf( 'Name: %s', $member['full_name'] ),
-				sprintf( 'Email: %s', $member['email'] ),
-				sprintf( 'Phone: %s', '' !== $member['phone'] ? $member['phone'] : '-' ),
-				sprintf( 'CID: %s', $member['ref_code'] ),
-				'',
-				'You earn commission whenever they sell a property.',
-				'',
-				sprintf( 'See all your premium-lines: %s', absolute_url( 'premium-lines' ) ),
+				'preheader'     => sprintf( '%s registered with your referral link.', $member['full_name'] ),
+				'heading'       => 'You have a new premium-line',
+				'greeting'      => sprintf( 'Dear %s,', $star['full_name'] ),
+				'paragraphs'    => array(
+					sprintf( '%s has just registered with your referral link and is now your premium-line.', $member['full_name'] ),
+					'You earn commission whenever they sell a property.',
+				),
+				'details_title' => 'Your new premium-line',
+				'details'       => array(
+					'Name'  => $member['full_name'],
+					'Email' => $member['email'],
+					'Phone' => '' !== $member['phone'] ? $member['phone'] : '-',
+					'CID'   => $member['ref_code'],
+				),
+				'button'        => array( 'View your premium-lines', absolute_url( 'premium-lines' ) ),
 			)
 		)
 	);
 }
 
-/** Tells a premium-star they have earned commission. */
-function send_commission_notice( $user, $message ) {
+/**
+ * Tells a premium-star they have earned commission.
+ *
+ * @param array $sale seller, type, amount, earned, rate.
+ */
+function send_commission_notice( $user, array $sale ) {
 	if ( ! $user ) {
 		return false;
 	}
 
 	return send_mail(
 		$user['email'],
-		sprintf( '%s - commission earned', config( 'site_name' ) ),
-		sprintf( "Dear %s,\n\n%s\n\nView your portal: %s", $user['full_name'], $message, absolute_url() )
+		sprintf( 'You earned %s in commission', money( $sale['earned'] ) ),
+		email_content(
+			array(
+				'preheader'     => sprintf( '%s sold a %s. Your commission: %s.', $sale['seller'], $sale['type'], money( $sale['earned'] ) ),
+				'heading'       => 'You earned a commission',
+				'greeting'      => sprintf( 'Dear %s,', $user['full_name'] ),
+				'paragraphs'    => array( sprintf( 'Good news: %s, your premium-line, has sold a property.', $sale['seller'] ) ),
+				'highlight'     => array( 'Your commission', money( $sale['earned'] ) ),
+				'details_title' => 'The sale',
+				'details'       => array(
+					'Sold by'         => $sale['seller'],
+					'Property'        => ucfirst( $sale['type'] ),
+					'Sale amount'     => money( $sale['amount'] ),
+					'Commission rate' => $sale['rate'] . '%',
+				),
+				'button'        => array( 'View your earnings', absolute_url() ),
+			)
+		)
 	);
 }
 
@@ -196,17 +240,18 @@ function send_password_reset( array $user, $link ) {
 	return send_mail(
 		$user['email'],
 		sprintf( '%s - reset your password', config( 'site_name' ) ),
-		implode(
-			"\n",
+		email_content(
 			array(
-				sprintf( 'Dear %s,', $user['full_name'] ),
-				'',
-				'Someone asked to reset the password for your realtor portal account.',
-				sprintf( 'To choose a new password, open this link within %d hour:', RESET_LIFETIME_HOURS ),
-				'',
-				$link,
-				'',
-				'If this was not you, ignore this email. Your password has not changed.',
+				'preheader'  => 'Choose a new password for your realtor portal account.',
+				'heading'    => 'Reset your password',
+				'greeting'   => sprintf( 'Dear %s,', $user['full_name'] ),
+				'paragraphs' => array(
+					'We received a request to reset the password for your realtor portal account.',
+					sprintf( 'Click the button below to choose a new one. The link works once and expires in %d hour.', RESET_LIFETIME_HOURS ),
+				),
+				'button'     => array( 'Choose a new password', $link ),
+				'link'       => array( 'If the button does not work, copy this link into your browser:', $link ),
+				'note'       => 'If you did not ask for this, you can ignore this email. Your password has not changed.',
 			)
 		)
 	);

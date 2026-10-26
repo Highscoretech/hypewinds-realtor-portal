@@ -46,6 +46,7 @@ function record_sale( array $in, $recorded_by ) {
 
 	$star_id = (int) $seller['premium_star_id'];
 	$message = null;
+	$notice  = null;
 
 	// Seller joined without a referral link: nobody to pay.
 	if ( $star_id ) {
@@ -66,13 +67,21 @@ function record_sale( array $in, $recorded_by ) {
 			rtrim( rtrim( number_format( $rate, 2 ), '0' ), '.' )
 		);
 		notify( $star_id, $message );
+
+		$notice = array(
+			'seller' => $seller['full_name'],
+			'type'   => $type,
+			'amount' => $amount,
+			'earned' => $earned,
+			'rate'   => rtrim( rtrim( number_format( $rate, 2 ), '0' ), '.' ),
+		);
 	}
 
 	$pdo->commit();
 
 	// Mail goes out only once the sale is safely stored.
-	if ( $message ) {
-		send_commission_notice( find_user( $star_id ), $message );
+	if ( $notice ) {
+		send_commission_notice( find_user( $star_id ), $notice );
 	}
 
 	return $sale_id;
