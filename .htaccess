@@ -1,0 +1,19 @@
+# Hypewinds realtor portal. Lives in its own folder under public_html, so these
+# rules replace WordPress's for this folder only.
+
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+
+	# Code, config, schema and git metadata are never served.
+	RewriteRule ^(src|config\.php|config\.sample\.php|schema\.sql|README\.md|\.git) - [F,L]
+
+	# Everything that is not a real file goes to the router.
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteRule ^ index.php [L,QSA]
+</IfModule>
+
+<FilesMatch "^(config\.php|config\.sample\.php|schema\.sql|README\.md)$">
+	Require all denied
+</FilesMatch>

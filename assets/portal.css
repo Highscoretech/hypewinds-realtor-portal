@@ -1,0 +1,855 @@
+/* Hypewinds realtor portal. Dark palette matching hypewindsproperties.com. */
+
+:root {
+	--hw-bg: #0f172a;
+	--hw-surface: #1e293b;
+	--hw-text: #e2e8f0;
+	--hw-text-muted: #94a3b8;
+	--hw-border: #2d3b52;
+	--mc-primary: #60a5fa;
+	color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	margin: 0;
+	min-height: 100%;
+}
+
+body {
+	background: var(--hw-bg);
+	color: var(--hw-text);
+	font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+	font-size: 15px;
+	line-height: 1.55;
+	-webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+	font-family: 'Poppins', 'Inter', sans-serif;
+	line-height: 1.25;
+}
+
+a {
+	color: var(--mc-primary);
+}
+
+.hrp {
+	max-width: 1100px;
+	margin: 0 auto;
+}
+
+.hrp-narrow {
+	max-width: 560px;
+}
+
+.hrp-card {
+	background: var(--hw-surface,#1e293b);
+	color: var(--hw-text,#e2e8f0);
+	border: 1px solid var(--hw-border,#2d3b52);
+	border-radius: 10px;
+	padding: 24px;
+	margin-bottom: 20px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.hrp-card h2,
+.hrp-card h3 {
+	margin-top: 0;
+	color: var(--hw-text,#f1f5f9);
+}
+
+.hrp-card p,
+.hrp-card label,
+.hrp-card li,
+.hrp-card td,
+.hrp-card th {
+	color: var(--hw-text,#e2e8f0);
+}
+
+.hrp-card a {
+	color: var(--mc-primary,#60a5fa);
+}
+
+.hrp-card .login-username label,
+.hrp-card .login-password label {
+	display: block;
+	margin-bottom: 4px;
+	font-weight: 600;
+}
+
+.hrp-card input[type="text"],
+.hrp-card input[type="email"],
+.hrp-card input[type="url"],
+.hrp-card input[type="tel"],
+.hrp-card input[type="date"],
+.hrp-card input[type="number"],
+.hrp-card input[type="password"],
+.hrp-card select,
+.hrp-input {
+	width: 100%;
+	padding: 11px 13px;
+	border: 1px solid var(--hw-border,#2d3b52);
+	border-radius: 6px;
+	background: var(--hw-bg,#0f172a);
+	color: var(--hw-text,#f1f5f9);
+	font-size: 15px;
+	box-sizing: border-box;
+}
+
+.hrp-card input:focus,
+.hrp-card select:focus {
+	outline: none;
+	border-color: #2563eb;
+	box-shadow: 0 0 0 1px #2563eb;
+}
+
+.hrp-card label {
+	display: block;
+	margin-bottom: 14px;
+	font-weight: 600;
+}
+
+.hrp-card input[type="checkbox"] {
+	width: auto;
+	margin-right: 8px;
+}
+
+.hrp-button,
+.hrp-card input[type="submit"] {
+	display: inline-block;
+	width: auto;
+	padding: 12px 22px;
+	border: 0;
+	border-radius: 6px;
+	background: #2563eb;
+	color: #ffffff;
+	font-weight: 700;
+	font-size: 15px;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+.hrp-button:hover,
+.hrp-card input[type="submit"]:hover {
+	background: #1d4ed8;
+	color: #ffffff;
+}
+
+.hrp-link {
+	margin-left: 14px;
+}
+
+.hrp-muted {
+	color: var(--hw-text-muted,#94a3b8);
+	font-size: 0.92em;
+	font-weight: 400;
+}
+
+.hrp-tiles {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 16px;
+	margin-bottom: 20px;
+}
+
+@media (min-width: 40rem) {
+	.hrp-tiles { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 64rem) {
+	.hrp-tiles { grid-template-columns: repeat(4, 1fr); }
+}
+
+.hrp-tile {
+	background: var(--hw-surface,#1e293b);
+	color: var(--hw-text,#e2e8f0);
+	border: 1px solid var(--hw-border,#2d3b52);
+	border-left: 5px solid #2563eb;
+	border-radius: 10px;
+	padding: 18px;
+}
+
+.hrp-tile span {
+	display: block;
+	font-size: 0.85em;
+	color: var(--hw-text-muted,#94a3b8);
+}
+
+.hrp-tile strong {
+	display: block;
+	font-size: 1.3em;
+	margin-top: 4px;
+	color: var(--hw-text,#f1f5f9);
+	word-break: break-word;
+}
+
+.hrp-alert {
+	padding: 11px 15px;
+	border-radius: 6px;
+	margin-bottom: 18px;
+}
+
+.hrp-alert-ok {
+	background: #ecfdf5;
+	color: #065f46;
+}
+
+.hrp-alert-error {
+	background: #fef2f2;
+	color: #991b1b;
+}
+
+/* Wide tables scroll rather than squeezing their columns off a phone. */
+.hrp-scroll {
+	overflow-x: auto;
+}
+
+.hrp-table {
+	width: 100%;
+	min-width: 560px;
+	border-collapse: collapse;
+	background: var(--hw-surface,#1e293b);
+}
+
+.hrp-table th,
+.hrp-table td {
+	text-align: left;
+	padding: 11px 13px;
+	border-bottom: 1px solid var(--hw-border,#2d3b52);
+	color: var(--hw-text,#e2e8f0);
+}
+
+.hrp-table th {
+	color: var(--hw-text,#f1f5f9);
+	font-weight: 700;
+}
+
+.hrp-pill {
+	display: inline-block;
+	padding: 3px 11px;
+	border-radius: 999px;
+	font-size: 0.8em;
+	font-weight: 700;
+	background: #16a34a;
+	color: #ffffff;
+}
+
+.hrp-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.hrp-list li {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 11px 0;
+	border-bottom: 1px solid var(--hw-border,#2d3b52);
+}
+
+/* ---------------------------------------------------------------------------
+   Signed-in shell: sidebar + topbar, as the demo laid out, on the site's own
+   branding. The sidebar is a drawer below 48rem and in-flow above it.
+   --------------------------------------------------------------------------- */
+
+.hrp-shell {
+	display: flex;
+	max-width: none;
+	margin: 0;
+	min-height: 70vh;
+	background: var(--hw-bg,#0f172a);
+}
+
+.hrp-nav-toggle,
+.hrp-backdrop {
+	display: none;
+}
+
+.hrp-sidebar {
+	width: 250px;
+	flex-shrink: 0;
+	background: #1e293b;
+	padding-bottom: 20px;
+}
+
+.hrp-sidebar-brand {
+	background: transparent;
+	padding: 16px;
+	text-align: center;
+}
+
+.hrp-logo-img {
+	max-width: 100%;
+	height: auto;
+	display: inline-block;
+}
+
+.hrp-logo-text {
+	font-weight: 800;
+	color: var(--hw-text,#f1f5f9);
+}
+
+.hrp-sidebar-user {
+	color: #ffffff;
+	font-weight: 700;
+	text-align: center;
+	margin: 16px 0;
+}
+
+.hrp-nav {
+	display: flex;
+	flex-direction: column;
+}
+
+.hrp-nav a {
+	color: #cbd5e1;
+	text-decoration: none;
+	padding: 12px 22px;
+	font-size: 15px;
+}
+
+.hrp-nav a:hover,
+.hrp-nav a.is-active {
+	background: var(--hw-text-muted,#94a3b8);
+	color: #ffffff;
+}
+
+.hrp-main {
+	flex: 1;
+	min-width: 0;
+}
+
+.hrp-topbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	background: var(--hw-surface,#1e293b);
+	border-bottom: 1px solid var(--hw-border,#2d3b52);
+	padding: 14px 18px;
+}
+
+.hrp-topbar-user {
+	color: var(--hw-text,#cbd5e1);
+	font-weight: 600;
+	margin-left: auto;
+}
+
+.hrp-burger {
+	display: none;
+	flex-direction: column;
+	gap: 5px;
+	cursor: pointer;
+}
+
+.hrp-burger span {
+	display: block;
+	width: 24px;
+	height: 2px;
+	background: var(--hw-text-muted,#94a3b8);
+}
+
+.hrp-content {
+	padding: 18px;
+}
+
+.hrp-page-title {
+	color: var(--hw-text,#f1f5f9);
+	margin-top: 0;
+}
+
+/* Registration and login sit on their own, centred. */
+.hrp-auth {
+	display: flex;
+	justify-content: center;
+	padding: 30px 16px;
+}
+
+.hrp-auth-card {
+	background: var(--hw-surface,#1e293b);
+	color: var(--hw-text,#e2e8f0);
+	border: 1px solid var(--hw-border,#2d3b52);
+	border-radius: 10px;
+	padding: 28px;
+	width: 100%;
+	max-width: 440px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.hrp-auth-wide {
+	max-width: 760px;
+}
+
+.hrp-auth-logo {
+	margin-bottom: 18px;
+}
+
+.hrp-auth-logo .hrp-logo-img {
+	max-width: 190px;
+}
+
+.hrp-auth-card h2 {
+	margin-top: 0;
+	color: var(--hw-text,#f1f5f9);
+}
+
+.hrp-auth-card p,
+.hrp-auth-card label {
+	color: var(--hw-text,#e2e8f0);
+}
+
+.hrp-auth-card a {
+	color: var(--mc-primary,#60a5fa);
+}
+
+.hrp-auth-card input[type="text"],
+.hrp-auth-card input[type="email"],
+.hrp-auth-card input[type="password"],
+.hrp-auth-card input[type="date"],
+.hrp-auth-card input[type="tel"] {
+	width: 100%;
+	padding: 11px 13px;
+	border: 1px solid var(--hw-border,#2d3b52);
+	border-radius: 6px;
+	background: var(--hw-bg,#0f172a);
+	color: var(--hw-text,#f1f5f9);
+	box-sizing: border-box;
+}
+
+.hrp-auth-card input[type="submit"] {
+	background: #2563eb;
+	color: #ffffff;
+	border: 0;
+	border-radius: 6px;
+	padding: 12px 22px;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.hrp-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 14px;
+}
+
+@media (min-width: 40rem) {
+	.hrp-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.hrp-check {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 16px 0;
+	font-weight: 400;
+}
+
+@media (max-width: 48rem) {
+	.hrp-sidebar {
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		z-index: 90;
+		transform: translateX(-100%);
+		transition: transform 0.2s ease;
+		overflow-y: auto;
+	}
+
+	.hrp-nav-toggle:checked ~ .hrp-sidebar {
+		transform: translateX(0);
+	}
+
+	.hrp-nav-toggle:checked ~ .hrp-backdrop {
+		display: block;
+		position: fixed;
+		inset: 0;
+		z-index: 80;
+		background: rgba(0, 0, 0, 0.5);
+	}
+
+	.hrp-burger {
+		display: flex;
+	}
+}
+
+/* Password field with a show/hide control. */
+.hrp-pass-wrap {
+	position: relative;
+	display: block;
+}
+
+.hrp-pass-wrap input {
+	padding-right: 46px !important;
+}
+
+.hrp-eye {
+	position: absolute;
+	top: 50%;
+	right: 10px;
+	transform: translateY(-50%);
+	background: none;
+	border: 0;
+	padding: 4px;
+	cursor: pointer;
+	line-height: 0;
+	color: var(--hw-text-muted,#94a3b8);
+}
+
+.hrp-eye svg {
+	width: 20px;
+	height: 20px;
+	display: block;
+}
+
+/* Copy control, sitting inside the field itself. */
+.hrp-copy-field {
+	position: relative;
+	display: block;
+}
+
+.hrp-copy-field .hrp-copy-value {
+	padding-right: 46px;
+}
+
+.hrp-copy {
+	position: absolute;
+	top: 50%;
+	right: 8px;
+	transform: translateY(-50%);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	padding: 0;
+	border: 0;
+	border-radius: 5px;
+	background: none;
+	color: var(--hw-text-muted,#94a3b8);
+	cursor: pointer;
+	line-height: 0;
+}
+
+.hrp-copy:hover {
+	background: rgba(96,165,250,.14);
+	color: var(--mc-primary,#60a5fa);
+}
+
+.hrp-copy.is-copied {
+	color: #16a34a;
+	background: #ecfdf5;
+}
+
+.hrp-copy svg {
+	width: 17px;
+	height: 17px;
+	display: block;
+}
+
+/* The one beside the bare code is inline, not inside a field. */
+.hrp-copy-plain {
+	position: static;
+	transform: none;
+	width: 26px;
+	height: 26px;
+	vertical-align: middle;
+	margin-left: 6px;
+}
+
+.hrp-code {
+	letter-spacing: 0.08em;
+}
+
+@media (min-width: 48rem) {
+	.hrp-topbar {
+		display: none;
+	}
+}
+
+/* ---------------------------------------------------------------------------
+   Auth screens. The forms use the .login-username / .login-password / .login-submit wrappers.
+   --------------------------------------------------------------------------- */
+
+.hrp-auth-card {
+	padding: 40px 36px 32px;
+	max-width: 430px;
+	border-radius: 14px;
+	border: 1px solid var(--hw-border,#2d3b52);
+	box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+}
+
+.hrp-auth-logo {
+	text-align: center;
+	margin-bottom: 26px;
+}
+
+.hrp-auth-logo .hrp-logo-img {
+	max-width: 210px;
+}
+
+.hrp-auth-card h2 {
+	text-align: center;
+	font-size: 23px;
+	line-height: 1.3;
+	margin: 0 0 6px;
+	color: var(--hw-text,#f1f5f9);
+}
+
+.hrp-auth-sub {
+	text-align: center;
+	color: var(--hw-text-muted,#94a3b8) !important;
+	font-size: 14.5px;
+	margin: 0 0 26px;
+}
+
+.hrp-auth-card .login-username,
+.hrp-auth-card .login-password {
+	margin-bottom: 18px;
+}
+
+.hrp-auth-card .login-username label,
+.hrp-auth-card .login-password label {
+	display: block;
+	margin-bottom: 7px;
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--hw-text,#e2e8f0);
+}
+
+.hrp-auth-card input[type="text"],
+.hrp-auth-card input[type="email"],
+.hrp-auth-card input[type="password"],
+.hrp-auth-card input[type="date"],
+.hrp-auth-card input[type="tel"] {
+	height: 48px;
+	border-radius: 9px;
+	border-color: var(--hw-border,#2d3b52);
+	font-size: 15px;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.hrp-auth-card input:focus {
+	outline: none;
+	border-color: #2563eb;
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* "Remember Me" ships as a checkbox and label jammed together. */
+.hrp-auth-card .login-remember {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 4px 0 22px;
+	font-size: 14px;
+	color: var(--hw-text-muted,#94a3b8);
+}
+
+.hrp-auth-card .login-remember label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+	font-weight: 400;
+	cursor: pointer;
+}
+
+.hrp-auth-card .login-remember input {
+	width: auto;
+	height: auto;
+	margin: 0;
+}
+
+.hrp-auth-card .login-submit {
+	margin: 0;
+}
+
+.hrp-auth-card .login-submit input[type="submit"] {
+	width: 100%;
+	height: 48px;
+	padding: 0;
+	border-radius: 9px;
+	font-size: 15.5px;
+	letter-spacing: 0.01em;
+	transition: background 0.15s ease;
+}
+
+.hrp-auth-forgot {
+	text-align: center;
+	margin: 18px 0 0;
+	font-size: 14px;
+}
+
+.hrp-auth-alt {
+	text-align: center;
+	font-size: 14.5px;
+	color: var(--hw-text-muted,#94a3b8) !important;
+	margin: 22px 0 0;
+	padding-top: 20px;
+	border-top: 1px solid var(--hw-border,#2d3b52);
+}
+
+.hrp-auth-alt a,
+.hrp-auth-forgot a {
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.hrp-auth-alt a:hover,
+.hrp-auth-forgot a:hover {
+	text-decoration: underline;
+}
+
+/* Registration carries twelve fields, so it needs the wider card and tighter
+   vertical rhythm than the login screen. */
+.hrp-auth-wide {
+	max-width: 780px;
+}
+
+.hrp-auth-wide .hrp-grid label {
+	margin-bottom: 0;
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--hw-text,#e2e8f0);
+}
+
+.hrp-auth-wide .hrp-grid input {
+	margin-top: 7px;
+}
+
+.hrp-auth-wide .hrp-button {
+	width: 100%;
+	height: 48px;
+	border-radius: 9px;
+	font-size: 15.5px;
+}
+
+/* ---------------------------------------------------------------------------
+   Standalone pages: no site header or footer around the portal, so the shell
+   and the sign-in screens fill the window themselves.
+   --------------------------------------------------------------------------- */
+
+.hrp-shell {
+	min-height: 100vh;
+}
+
+.hrp-auth {
+	min-height: 100vh;
+	align-items: center;
+}
+
+@media (min-width: 48.01rem) {
+	.hrp-sidebar {
+		position: sticky;
+		top: 0;
+		height: 100vh;
+		overflow-y: auto;
+	}
+}
+
+.hrp-content {
+	padding: 28px;
+	max-width: 1100px;
+}
+
+.hrp-page-title {
+	font-size: 1.6em;
+	margin: 0 0 20px;
+}
+
+.hrp-sidebar-brand a {
+	display: inline-block;
+}
+
+/* Log out is a form (it changes state), dressed as one of the nav links. */
+.hrp-nav form {
+	margin: 0;
+}
+
+.hrp-nav-button {
+	display: block;
+	width: 100%;
+	padding: 12px 22px;
+	border: 0;
+	background: none;
+	color: #cbd5e1;
+	font: inherit;
+	font-size: 15px;
+	text-align: left;
+	cursor: pointer;
+}
+
+.hrp-nav-button:hover {
+	background: var(--hw-text-muted);
+	color: #ffffff;
+}
+
+/* Fields inside the admin grids sit in the grid gap, not their own margin. */
+.hrp-card .hrp-grid label {
+	margin-bottom: 0;
+}
+
+.hrp-card .hrp-grid input,
+.hrp-card .hrp-grid select,
+.hrp-card label > input,
+.hrp-card label > select {
+	margin-top: 7px;
+}
+
+.hrp-card form > label {
+	margin-top: 14px;
+}
+
+.hrp-pill-off {
+	background: #475569;
+}
+
+.hrp-table-wide {
+	min-width: 860px;
+}
+
+.hrp-actions {
+	white-space: nowrap;
+	text-align: right;
+}
+
+.hrp-actions form {
+	display: inline;
+	margin-left: 12px;
+}
+
+.hrp-text-button {
+	padding: 0;
+	border: 0;
+	background: none;
+	color: #f87171;
+	font: inherit;
+	cursor: pointer;
+}
+
+.hrp-text-button:hover {
+	text-decoration: underline;
+}
+
+/* .hrp-card input[type="text"] outranks the copy field's own padding, which
+   let a long link run under the copy button on a phone. */
+.hrp-card .hrp-copy-field .hrp-copy-value {
+	padding-right: 46px;
+	text-overflow: ellipsis;
+}
+
+.hrp-list em {
+	margin-left: 8px;
+	font-style: normal;
+	white-space: nowrap;
+}
