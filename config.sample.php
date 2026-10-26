@@ -34,7 +34,7 @@ return array(
 
 	'site_name'  => 'Hypewinds Properties',
 	'site_url'   => 'https://hypewindsproperties.com',
-	'currency'   => '₦',
+	'currency'   => "\u{20A6}", // The naira sign, as an escape so this file stays plain ASCII.
 
 	// Unlocks /setup, which creates the tables and the first admin account.
 	// /setup stops working by itself once an admin exists. Use a long random

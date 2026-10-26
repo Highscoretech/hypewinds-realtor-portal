@@ -1,12 +1,26 @@
-/* Hypewinds realtor portal. Dark palette matching hypewindsproperties.com. */
+/* Hypewinds realtor portal. Dark theme matching hypewindsproperties.com. */
 
 :root {
-	--hw-bg: #0f172a;
-	--hw-surface: #1e293b;
-	--hw-text: #e2e8f0;
-	--hw-text-muted: #94a3b8;
-	--hw-border: #2d3b52;
-	--mc-primary: #60a5fa;
+	--bg: #0b1220;
+	--surface: #111a2e;
+	--surface-2: #16213a;
+	--surface-3: #1c2945;
+	--border: #1f2c47;
+	--border-strong: #2b3b5c;
+	--text: #e6ebf3;
+	--muted: #94a3b8;
+	--faint: #64748b;
+	--primary: #3b82f6;
+	--primary-strong: #2563eb;
+	--brand-red: #e63946;
+	--green: #22c55e;
+	--violet: #8b5cf6;
+	--amber: #f59e0b;
+	--radius: 14px;
+	--radius-sm: 9px;
+	--shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 8px 24px rgba(0, 0, 0, 0.18);
+	--font: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+	--font-display: 'Poppins', 'Inter', sans-serif;
 	color-scheme: dark;
 }
 
@@ -23,9 +37,9 @@ body {
 }
 
 body {
-	background: var(--hw-bg);
-	color: var(--hw-text);
-	font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+	background: var(--bg);
+	color: var(--text);
+	font-family: var(--font);
 	font-size: 15px;
 	line-height: 1.55;
 	-webkit-font-smoothing: antialiased;
@@ -33,843 +47,1207 @@ body {
 
 h1,
 h2,
-h3 {
-	font-family: 'Poppins', 'Inter', sans-serif;
-	line-height: 1.25;
+h3,
+p {
+	margin: 0;
 }
 
 a {
-	color: var(--mc-primary);
-}
-
-.hrp {
-	max-width: 1100px;
-	margin: 0 auto;
-}
-
-.hrp-narrow {
-	max-width: 560px;
-}
-
-.hrp-card {
-	background: var(--hw-surface,#1e293b);
-	color: var(--hw-text,#e2e8f0);
-	border: 1px solid var(--hw-border,#2d3b52);
-	border-radius: 10px;
-	padding: 24px;
-	margin-bottom: 20px;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-
-.hrp-card h2,
-.hrp-card h3 {
-	margin-top: 0;
-	color: var(--hw-text,#f1f5f9);
-}
-
-.hrp-card p,
-.hrp-card label,
-.hrp-card li,
-.hrp-card td,
-.hrp-card th {
-	color: var(--hw-text,#e2e8f0);
-}
-
-.hrp-card a {
-	color: var(--mc-primary,#60a5fa);
-}
-
-.hrp-card .login-username label,
-.hrp-card .login-password label {
-	display: block;
-	margin-bottom: 4px;
-	font-weight: 600;
-}
-
-.hrp-card input[type="text"],
-.hrp-card input[type="email"],
-.hrp-card input[type="url"],
-.hrp-card input[type="tel"],
-.hrp-card input[type="date"],
-.hrp-card input[type="number"],
-.hrp-card input[type="password"],
-.hrp-card select,
-.hrp-input {
-	width: 100%;
-	padding: 11px 13px;
-	border: 1px solid var(--hw-border,#2d3b52);
-	border-radius: 6px;
-	background: var(--hw-bg,#0f172a);
-	color: var(--hw-text,#f1f5f9);
-	font-size: 15px;
-	box-sizing: border-box;
-}
-
-.hrp-card input:focus,
-.hrp-card select:focus {
-	outline: none;
-	border-color: #2563eb;
-	box-shadow: 0 0 0 1px #2563eb;
-}
-
-.hrp-card label {
-	display: block;
-	margin-bottom: 14px;
-	font-weight: 600;
-}
-
-.hrp-card input[type="checkbox"] {
-	width: auto;
-	margin-right: 8px;
-}
-
-.hrp-button,
-.hrp-card input[type="submit"] {
-	display: inline-block;
-	width: auto;
-	padding: 12px 22px;
-	border: 0;
-	border-radius: 6px;
-	background: #2563eb;
-	color: #ffffff;
-	font-weight: 700;
-	font-size: 15px;
-	cursor: pointer;
+	color: #60a5fa;
 	text-decoration: none;
 }
 
-.hrp-button:hover,
-.hrp-card input[type="submit"]:hover {
-	background: #1d4ed8;
-	color: #ffffff;
+a:hover {
+	text-decoration: underline;
 }
 
-.hrp-link {
-	margin-left: 14px;
+.icon {
+	width: 18px;
+	height: 18px;
+	flex-shrink: 0;
 }
 
-.hrp-muted {
-	color: var(--hw-text-muted,#94a3b8);
-	font-size: 0.92em;
-	font-weight: 400;
+.muted {
+	color: var(--muted);
 }
 
-.hrp-tiles {
+.center {
+	text-align: center;
+}
+
+.code {
+	font-variant-numeric: tabular-nums;
+	letter-spacing: 0.06em;
+	font-weight: 600;
+}
+
+/* ---------------------------------------------------------------------------
+   App shell: fixed sidebar, scrolling main column.
+   --------------------------------------------------------------------------- */
+
+.app {
 	display: grid;
-	grid-template-columns: 1fr;
+	grid-template-columns: 264px minmax(0, 1fr);
+	min-height: 100vh;
+}
+
+.nav-toggle {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.sidebar {
+	position: sticky;
+	top: 0;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	gap: 22px;
+	padding: 24px 16px;
+	background: var(--surface);
+	border-right: 1px solid var(--border);
+	overflow-y: auto;
+}
+
+.sidebar-brand {
+	display: block;
+	padding: 2px 8px;
+}
+
+.logo {
+	display: block;
+	width: 168px;
+	max-width: 100%;
+	height: auto;
+}
+
+.profile {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px;
+	background: var(--surface-2);
+	border: 1px solid var(--border);
+	border-radius: 12px;
+}
+
+.profile-text {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.profile-name {
+	font-weight: 600;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.profile-meta {
+	font-size: 12.5px;
+	color: var(--muted);
+	font-variant-numeric: tabular-nums;
+}
+
+.avatar {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #2563eb, #7c3aed);
+	color: #fff;
+	font-weight: 700;
+	font-size: 14px;
+	letter-spacing: 0.02em;
+}
+
+.avatar-sm {
+	width: 30px;
+	height: 30px;
+	font-size: 11.5px;
+}
+
+.nav {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.nav-label {
+	padding: 0 12px 6px;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--faint);
+}
+
+.nav-link {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	padding: 10px 12px;
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: var(--muted);
+	font: inherit;
+	font-weight: 500;
+	text-align: left;
+	cursor: pointer;
+	transition: background 0.15s ease, color 0.15s ease;
+}
+
+.nav-link:hover {
+	background: var(--surface-2);
+	color: var(--text);
+	text-decoration: none;
+}
+
+.nav-link.is-active {
+	background: rgba(59, 130, 246, 0.14);
+	color: #fff;
+}
+
+.nav-link.is-active .icon {
+	color: #60a5fa;
+}
+
+.nav-link.is-active::before {
+	content: '';
+	position: absolute;
+	left: -16px;
+	top: 8px;
+	bottom: 8px;
+	width: 3px;
+	border-radius: 0 3px 3px 0;
+	background: var(--primary);
+}
+
+.nav-bottom {
+	margin-top: auto;
+	padding-top: 16px;
+	border-top: 1px solid var(--border);
+}
+
+.nav-bottom form {
+	margin: 0;
+}
+
+.nav-logout:hover {
+	color: #fca5a5;
+}
+
+.backdrop {
+	display: none;
+}
+
+.main {
+	min-width: 0;
+}
+
+.topbar {
+	display: none;
+}
+
+.content {
+	max-width: 1180px;
+	padding: 32px 40px 48px;
+}
+
+.page-head {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 16px;
+	margin-bottom: 26px;
+}
+
+.page-head h1 {
+	font-family: var(--font-display);
+	font-size: 26px;
+	font-weight: 600;
+	line-height: 1.25;
+	color: #fff;
+}
+
+.page-head p {
+	margin-top: 4px;
+	color: var(--muted);
+}
+
+.page-date {
+	color: var(--faint);
+	font-size: 13.5px;
+	white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------------
+   Stat cards.
+   --------------------------------------------------------------------------- */
+
+.stats {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
 	gap: 16px;
 	margin-bottom: 20px;
 }
 
-@media (min-width: 40rem) {
-	.hrp-tiles { grid-template-columns: repeat(2, 1fr); }
+.stats-3 {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-@media (min-width: 64rem) {
-	.hrp-tiles { grid-template-columns: repeat(4, 1fr); }
+.stat {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 20px;
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
 }
 
-.hrp-tile {
-	background: var(--hw-surface,#1e293b);
-	color: var(--hw-text,#e2e8f0);
-	border: 1px solid var(--hw-border,#2d3b52);
-	border-left: 5px solid #2563eb;
+.stat-icon,
+.row-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 38px;
+	height: 38px;
 	border-radius: 10px;
-	padding: 18px;
+	margin-bottom: 10px;
 }
 
-.hrp-tile span {
-	display: block;
-	font-size: 0.85em;
-	color: var(--hw-text-muted,#94a3b8);
+.is-blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+.is-green { background: rgba(34, 197, 94, 0.14); color: #4ade80; }
+.is-violet { background: rgba(139, 92, 246, 0.16); color: #a78bfa; }
+.is-red { background: rgba(230, 57, 70, 0.15); color: #f87171; }
+
+.stat-label {
+	font-size: 13.5px;
+	color: var(--muted);
 }
 
-.hrp-tile strong {
-	display: block;
-	font-size: 1.3em;
-	margin-top: 4px;
-	color: var(--hw-text,#f1f5f9);
+.stat-value {
+	font-size: 26px;
+	font-weight: 700;
+	line-height: 1.2;
+	color: #fff;
+	font-variant-numeric: tabular-nums;
 	word-break: break-word;
 }
 
-.hrp-alert {
-	padding: 11px 15px;
-	border-radius: 6px;
-	margin-bottom: 18px;
+.stat-code {
+	letter-spacing: 0.06em;
 }
 
-/* Doubled class so card rules like ".hrp-auth-card p" (which set light text
-   for the dark theme) cannot repaint the alert's text. That is what once left
-   light text on a pale box, unreadable. */
-.hrp-alert.hrp-alert-ok {
-	background: rgba(34, 197, 94, 0.12);
-	border: 1px solid rgba(34, 197, 94, 0.45);
-	color: #bbf7d0;
-}
-
-.hrp-alert.hrp-alert-error {
-	background: rgba(239, 68, 68, 0.12);
-	border: 1px solid rgba(239, 68, 68, 0.5);
-	color: #fecaca;
-}
-
-.hrp-alert.hrp-alert-warn {
-	background: rgba(234, 179, 8, 0.12);
-	border: 1px solid rgba(234, 179, 8, 0.5);
-	color: #fef3c7;
-}
-
-.hrp-alert {
-	white-space: pre-line;
-	line-height: 1.6;
-}
-
-.hrp-alert strong {
-	color: #ffffff;
-}
-
-/* Wide tables scroll rather than squeezing their columns off a phone. */
-.hrp-scroll {
-	overflow-x: auto;
-}
-
-.hrp-table {
-	width: 100%;
-	min-width: 560px;
-	border-collapse: collapse;
-	background: var(--hw-surface,#1e293b);
-}
-
-.hrp-table th,
-.hrp-table td {
-	text-align: left;
-	padding: 11px 13px;
-	border-bottom: 1px solid var(--hw-border,#2d3b52);
-	color: var(--hw-text,#e2e8f0);
-}
-
-.hrp-table th {
-	color: var(--hw-text,#f1f5f9);
-	font-weight: 700;
-}
-
-.hrp-pill {
-	display: inline-block;
-	padding: 3px 11px;
-	border-radius: 999px;
-	font-size: 0.8em;
-	font-weight: 700;
-	background: #16a34a;
-	color: #ffffff;
-}
-
-.hrp-list {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-}
-
-.hrp-list li {
-	display: flex;
-	justify-content: space-between;
-	gap: 12px;
-	padding: 11px 0;
-	border-bottom: 1px solid var(--hw-border,#2d3b52);
+.stat-foot {
+	font-size: 12.5px;
+	color: var(--faint);
 }
 
 /* ---------------------------------------------------------------------------
-   Signed-in shell: sidebar + topbar, as the demo laid out, on the site's own
-   branding. The sidebar is a drawer below 48rem and in-flow above it.
+   Cards.
    --------------------------------------------------------------------------- */
 
-.hrp-shell {
+.card {
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	margin-bottom: 20px;
+	overflow: hidden;
+}
+
+.card-head {
 	display: flex;
-	max-width: none;
-	margin: 0;
-	min-height: 70vh;
-	background: var(--hw-bg,#0f172a);
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 16px 22px;
+	border-bottom: 1px solid var(--border);
 }
 
-.hrp-nav-toggle,
-.hrp-backdrop {
-	display: none;
+.card-head h2,
+.referral h2 {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-size: 15.5px;
+	font-weight: 600;
+	color: #fff;
 }
 
-.hrp-sidebar {
-	width: 250px;
-	flex-shrink: 0;
-	background: #1e293b;
-	padding-bottom: 20px;
+.card-head h2 .icon {
+	color: var(--muted);
 }
 
-.hrp-sidebar-brand {
-	background: transparent;
-	padding: 16px;
-	text-align: center;
+.card-body {
+	padding: 22px;
 }
 
-.hrp-logo-img {
-	max-width: 100%;
-	height: auto;
-	display: inline-block;
+.badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 24px;
+	height: 22px;
+	padding: 0 8px;
+	border-radius: 999px;
+	background: var(--surface-3);
+	color: var(--muted);
+	font-size: 12px;
+	font-weight: 600;
 }
 
-.hrp-logo-text {
-	font-weight: 800;
-	color: var(--hw-text,#f1f5f9);
+.columns {
+	display: grid;
+	grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+	gap: 20px;
+	align-items: start;
 }
 
-.hrp-sidebar-user {
-	color: #ffffff;
-	font-weight: 700;
-	text-align: center;
-	margin: 16px 0;
+/* Referral: the one card meant to stand out. */
+.referral {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+	gap: 28px;
+	align-items: center;
+	padding: 26px;
+	background:
+		radial-gradient(120% 140% at 0% 0%, rgba(37, 99, 235, 0.22), transparent 55%),
+		radial-gradient(90% 120% at 100% 100%, rgba(230, 57, 70, 0.12), transparent 60%),
+		var(--surface);
+	border-color: var(--border-strong);
 }
 
-.hrp-nav {
+.referral h2 .icon {
+	color: #60a5fa;
+}
+
+.referral-text p {
+	margin-top: 8px;
+	color: var(--muted);
+	font-size: 14px;
+}
+
+.referral-actions {
 	display: flex;
 	flex-direction: column;
+	gap: 12px;
 }
 
-.hrp-nav a {
-	color: #cbd5e1;
-	text-decoration: none;
+.referral-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+.referral-row .muted {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13.5px;
+}
+
+.referral-row strong {
+	color: #fff;
+}
+
+.copy-field {
+	display: flex;
+	gap: 8px;
+}
+
+.copy-field .input {
+	flex: 1;
+	min-width: 0;
+	text-overflow: ellipsis;
+}
+
+/* Lists: commissions. */
+.rows {
+	list-style: none;
+	margin: 0;
+	padding: 6px 0;
+}
+
+.row {
+	display: flex;
+	align-items: center;
+	gap: 14px;
 	padding: 12px 22px;
-	font-size: 15px;
 }
 
-.hrp-nav a:hover,
-.hrp-nav a.is-active {
-	background: var(--hw-text-muted,#94a3b8);
-	color: #ffffff;
+.row + .row {
+	border-top: 1px solid var(--border);
 }
 
-.hrp-main {
+.row .row-icon {
+	margin: 0;
+	width: 36px;
+	height: 36px;
+}
+
+.row-main {
+	display: flex;
+	flex-direction: column;
 	flex: 1;
 	min-width: 0;
 }
 
-.hrp-topbar {
+.row-title {
+	font-weight: 500;
+}
+
+.row-meta {
+	font-size: 13px;
+	color: var(--faint);
+}
+
+.row-amount,
+.amount-up {
+	color: #4ade80;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+/* Notifications feed. */
+.feed {
+	list-style: none;
+	margin: 0;
+	padding: 8px 22px;
+}
+
+.feed li {
+	display: flex;
+	gap: 12px;
+	padding: 12px 0;
+}
+
+.feed li + li {
+	border-top: 1px solid var(--border);
+}
+
+.feed-dot {
+	flex-shrink: 0;
+	width: 8px;
+	height: 8px;
+	margin-top: 7px;
+	border-radius: 50%;
+	background: var(--primary);
+	box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+.feed-body {
+	font-size: 14px;
+}
+
+.feed-time {
+	display: block;
+	margin-top: 2px;
+	font-size: 12.5px;
+	color: var(--faint);
+}
+
+.person {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 18px 22px;
+}
+
+.person-name {
+	display: block;
+	font-weight: 600;
+}
+
+.person-meta {
+	display: block;
+	font-size: 13.5px;
+	color: var(--muted);
+	word-break: break-all;
+}
+
+/* Empty states. */
+.empty {
+	padding: 30px 22px 32px;
+	text-align: center;
+}
+
+.empty-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 46px;
+	height: 46px;
+	margin-bottom: 12px;
+	border-radius: 50%;
+	background: var(--surface-2);
+	border: 1px solid var(--border);
+	color: var(--faint);
+}
+
+.empty-title {
+	font-weight: 600;
+	color: var(--text);
+}
+
+.empty-text {
+	margin-top: 4px;
+	font-size: 14px;
+	color: var(--muted);
+}
+
+/* ---------------------------------------------------------------------------
+   Tables.
+   --------------------------------------------------------------------------- */
+
+.table-wrap {
+	overflow-x: auto;
+}
+
+.table {
+	width: 100%;
+	min-width: 600px;
+	border-collapse: collapse;
+	font-size: 14px;
+}
+
+.table-wide {
+	min-width: 920px;
+}
+
+.table th {
+	padding: 11px 22px;
+	background: var(--surface-2);
+	color: var(--faint);
+	font-size: 11.5px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	text-align: left;
+	white-space: nowrap;
+}
+
+.table td {
+	padding: 13px 22px;
+	border-top: 1px solid var(--border);
+	color: var(--text);
+	vertical-align: middle;
+}
+
+.table tbody tr:hover td {
+	background: rgba(255, 255, 255, 0.015);
+}
+
+.table .num {
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+.table .strong {
+	font-weight: 600;
+}
+
+.table a .icon {
+	width: 13px;
+	height: 13px;
+	vertical-align: -1px;
+}
+
+.cell-person {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	font-weight: 500;
+	white-space: nowrap;
+}
+
+.stack {
+	display: flex;
+	flex-direction: column;
+}
+
+.stack .muted {
+	font-size: 12.5px;
+}
+
+.actions {
+	text-align: right;
+	white-space: nowrap;
+}
+
+.actions form {
+	display: inline;
+	margin-left: 6px;
+}
+
+.pill {
+	display: inline-block;
+	padding: 3px 10px;
+	border-radius: 999px;
+	background: rgba(34, 197, 94, 0.14);
+	color: #4ade80;
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.pill-warn {
+	background: rgba(245, 158, 11, 0.15);
+	color: #fbbf24;
+}
+
+.pill-muted {
+	background: var(--surface-3);
+	color: var(--muted);
+}
+
+/* ---------------------------------------------------------------------------
+   Buttons and forms.
+   --------------------------------------------------------------------------- */
+
+.btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	height: 42px;
+	padding: 0 18px;
+	border: 1px solid transparent;
+	border-radius: var(--radius-sm);
+	font: inherit;
+	font-size: 14.5px;
+	font-weight: 600;
+	white-space: nowrap;
+	cursor: pointer;
+	text-decoration: none;
+	transition: background 0.15s ease, border-color 0.15s ease, transform 0.05s ease;
+}
+
+.btn:hover {
+	text-decoration: none;
+}
+
+.btn:active {
+	transform: translateY(1px);
+}
+
+.btn-primary {
+	background: var(--primary-strong);
+	color: #fff;
+}
+
+.btn-primary:hover {
+	background: #1d4ed8;
+}
+
+.btn-primary.is-copied {
+	background: #16a34a;
+}
+
+.btn-whatsapp {
+	background: rgba(34, 197, 94, 0.12);
+	border-color: rgba(34, 197, 94, 0.35);
+	color: #4ade80;
+}
+
+.btn-whatsapp:hover {
+	background: rgba(34, 197, 94, 0.2);
+}
+
+.btn-ghost {
+	background: transparent;
+	border-color: var(--border-strong);
+	color: var(--text);
+}
+
+.btn-ghost:hover {
+	background: var(--surface-2);
+}
+
+.btn-danger {
+	background: transparent;
+	border-color: rgba(239, 68, 68, 0.4);
+	color: #f87171;
+}
+
+.btn-danger:hover {
+	background: rgba(239, 68, 68, 0.12);
+}
+
+.btn-sm {
+	height: 32px;
+	padding: 0 12px;
+	font-size: 13px;
+}
+
+.btn-block {
+	width: 100%;
+	height: 46px;
+}
+
+.icon-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 42px;
+	height: 42px;
+	border: 1px solid var(--border-strong);
+	border-radius: var(--radius-sm);
+	background: var(--surface-2);
+	color: var(--muted);
+	cursor: pointer;
+	transition: color 0.15s ease, background 0.15s ease;
+}
+
+.icon-button:hover {
+	color: #fff;
+	background: var(--surface-3);
+}
+
+.icon-button.is-copied {
+	color: #4ade80;
+	border-color: rgba(34, 197, 94, 0.5);
+}
+
+.icon-button-sm {
+	width: 28px;
+	height: 28px;
+	border-radius: 7px;
+}
+
+.icon-button-sm .icon {
+	width: 14px;
+	height: 14px;
+}
+
+.form {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+
+.form-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px 18px;
+}
+
+.field {
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
+	min-width: 0;
+}
+
+.field > span,
+.field-label {
+	font-size: 13.5px;
+	font-weight: 500;
+	color: #cbd5e1;
+}
+
+.field-label {
+	display: block;
+	margin-bottom: 7px;
+}
+
+.field small {
+	font-size: 12.5px;
+	color: var(--faint);
+}
+
+.field-wide {
+	grid-column: 1 / -1;
+}
+
+.input {
+	width: 100%;
+	height: 44px;
+	padding: 0 14px;
+	border: 1px solid var(--border-strong);
+	border-radius: var(--radius-sm);
+	background: var(--bg);
+	color: var(--text);
+	font: inherit;
+	font-size: 15px;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input::placeholder {
+	color: var(--faint);
+}
+
+.input:focus {
+	outline: none;
+	border-color: var(--primary);
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.input[readonly] {
+	background: var(--surface-2);
+	color: #cbd5e1;
+}
+
+select.input {
+	appearance: none;
+	padding-right: 38px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 12px center;
+	background-size: 16px;
+}
+
+.form-foot {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 12px;
-	background: var(--hw-surface,#1e293b);
-	border-bottom: 1px solid var(--hw-border,#2d3b52);
-	padding: 14px 18px;
+	gap: 16px;
+	flex-wrap: wrap;
+	padding-top: 4px;
 }
 
-.hrp-topbar-user {
-	color: var(--hw-text,#cbd5e1);
+.form-foot .muted {
+	font-size: 13.5px;
+}
+
+.form-section {
+	margin-top: 4px;
+	font-size: 12px;
 	font-weight: 600;
-	margin-left: auto;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--faint);
 }
 
-.hrp-burger {
-	display: none;
-	flex-direction: column;
-	gap: 5px;
-	cursor: pointer;
-}
-
-.hrp-burger span {
-	display: block;
-	width: 24px;
-	height: 2px;
-	background: var(--hw-text-muted,#94a3b8);
-}
-
-.hrp-content {
-	padding: 18px;
-}
-
-.hrp-page-title {
-	color: var(--hw-text,#f1f5f9);
-	margin-top: 0;
-}
-
-/* Registration and login sit on their own, centred. */
-.hrp-auth {
-	display: flex;
-	justify-content: center;
-	padding: 30px 16px;
-}
-
-.hrp-auth-card {
-	background: var(--hw-surface,#1e293b);
-	color: var(--hw-text,#e2e8f0);
-	border: 1px solid var(--hw-border,#2d3b52);
-	border-radius: 10px;
-	padding: 28px;
-	width: 100%;
-	max-width: 440px;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-
-.hrp-auth-wide {
-	max-width: 760px;
-}
-
-.hrp-auth-logo {
-	margin-bottom: 18px;
-}
-
-.hrp-auth-logo .hrp-logo-img {
-	max-width: 190px;
-}
-
-.hrp-auth-card h2 {
-	margin-top: 0;
-	color: var(--hw-text,#f1f5f9);
-}
-
-.hrp-auth-card p,
-.hrp-auth-card label {
-	color: var(--hw-text,#e2e8f0);
-}
-
-.hrp-auth-card a {
-	color: var(--mc-primary,#60a5fa);
-}
-
-.hrp-auth-card input[type="text"],
-.hrp-auth-card input[type="email"],
-.hrp-auth-card input[type="password"],
-.hrp-auth-card input[type="date"],
-.hrp-auth-card input[type="tel"] {
-	width: 100%;
-	padding: 11px 13px;
-	border: 1px solid var(--hw-border,#2d3b52);
-	border-radius: 6px;
-	background: var(--hw-bg,#0f172a);
-	color: var(--hw-text,#f1f5f9);
-	box-sizing: border-box;
-}
-
-.hrp-auth-card input[type="submit"] {
-	background: #2563eb;
-	color: #ffffff;
-	border: 0;
-	border-radius: 6px;
-	padding: 12px 22px;
-	font-weight: 700;
-	cursor: pointer;
-}
-
-.hrp-grid {
-	display: grid;
-	grid-template-columns: 1fr;
-	gap: 14px;
-}
-
-@media (min-width: 40rem) {
-	.hrp-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-.hrp-check {
+.check {
 	display: flex;
 	align-items: center;
-	gap: 8px;
-	margin: 16px 0;
-	font-weight: 400;
-}
-
-@media (max-width: 48rem) {
-	.hrp-sidebar {
-		position: fixed;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		z-index: 90;
-		transform: translateX(-100%);
-		transition: transform 0.2s ease;
-		overflow-y: auto;
-	}
-
-	.hrp-nav-toggle:checked ~ .hrp-sidebar {
-		transform: translateX(0);
-	}
-
-	.hrp-nav-toggle:checked ~ .hrp-backdrop {
-		display: block;
-		position: fixed;
-		inset: 0;
-		z-index: 80;
-		background: rgba(0, 0, 0, 0.5);
-	}
-
-	.hrp-burger {
-		display: flex;
-	}
-}
-
-/* Password field with a show/hide control. */
-.hrp-pass-wrap {
-	position: relative;
-	display: block;
-}
-
-.hrp-pass-wrap input {
-	padding-right: 46px !important;
-}
-
-.hrp-eye {
-	position: absolute;
-	top: 50%;
-	right: 10px;
-	transform: translateY(-50%);
-	background: none;
-	border: 0;
-	padding: 4px;
+	gap: 10px;
+	font-size: 14px;
 	cursor: pointer;
-	line-height: 0;
-	color: var(--hw-text-muted,#94a3b8);
 }
 
-.hrp-eye svg {
-	width: 20px;
-	height: 20px;
-	display: block;
+.check input {
+	width: 17px;
+	height: 17px;
+	accent-color: var(--primary-strong);
 }
 
-/* Copy control, sitting inside the field itself. */
-.hrp-copy-field {
+.stack-lg {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+
+/* Password show/hide (added by portal.js). */
+.pass-wrap {
 	position: relative;
 	display: block;
 }
 
-.hrp-copy-field .hrp-copy-value {
+.pass-wrap .input {
 	padding-right: 46px;
 }
 
-.hrp-copy {
+.pass-eye {
 	position: absolute;
 	top: 50%;
 	right: 8px;
 	transform: translateY(-50%);
 	display: inline-flex;
+	padding: 6px;
+	border: 0;
+	background: none;
+	color: var(--faint);
+	cursor: pointer;
+}
+
+.pass-eye:hover {
+	color: var(--text);
+}
+
+/* ---------------------------------------------------------------------------
+   Alerts. Doubled classes so no card rule can repaint their text.
+   --------------------------------------------------------------------------- */
+
+.alert {
+	display: flex;
+	gap: 12px;
+	align-items: flex-start;
+	padding: 13px 16px;
+	margin-bottom: 20px;
+	border-radius: var(--radius-sm);
+	border: 1px solid;
+	font-size: 14px;
+	line-height: 1.6;
+}
+
+.alert p {
+	white-space: pre-line;
+	color: inherit;
+}
+
+.alert .icon {
+	margin-top: 2px;
+}
+
+.alert.alert-ok {
+	background: rgba(34, 197, 94, 0.1);
+	border-color: rgba(34, 197, 94, 0.4);
+	color: #bbf7d0;
+}
+
+.alert.alert-error {
+	background: rgba(239, 68, 68, 0.1);
+	border-color: rgba(239, 68, 68, 0.45);
+	color: #fecaca;
+}
+
+.alert.alert-warn {
+	background: rgba(245, 158, 11, 0.1);
+	border-color: rgba(245, 158, 11, 0.45);
+	color: #fde68a;
+}
+
+.alert strong {
+	color: #fff;
+}
+
+/* ---------------------------------------------------------------------------
+   Sign-in, registration and setup screens.
+   --------------------------------------------------------------------------- */
+
+.auth {
+	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 30px;
-	height: 30px;
-	padding: 0;
-	border: 0;
-	border-radius: 5px;
-	background: none;
-	color: var(--hw-text-muted,#94a3b8);
-	cursor: pointer;
-	line-height: 0;
+	min-height: 100vh;
+	padding: 40px 16px;
+	background:
+		radial-gradient(60% 50% at 50% 0%, rgba(37, 99, 235, 0.16), transparent 70%),
+		var(--bg);
 }
 
-.hrp-copy:hover {
-	background: rgba(96,165,250,.14);
-	color: var(--mc-primary,#60a5fa);
+.auth-card {
+	width: 100%;
+	max-width: 440px;
+	padding: 36px 34px 30px;
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: 18px;
+	box-shadow: var(--shadow);
 }
 
-.hrp-copy.is-copied {
-	color: #16a34a;
-	background: #ecfdf5;
+.auth-wide {
+	max-width: 760px;
 }
 
-.hrp-copy svg {
-	width: 17px;
-	height: 17px;
+.auth-logo {
 	display: block;
+	width: fit-content;
+	margin: 0 auto 26px;
 }
 
-/* The one beside the bare code is inline, not inside a field. */
-.hrp-copy-plain {
-	position: static;
-	transform: none;
-	width: 26px;
-	height: 26px;
-	vertical-align: middle;
-	margin-left: 6px;
+.auth-logo .logo {
+	width: 190px;
 }
 
-.hrp-code {
-	letter-spacing: 0.08em;
+.auth-card h1 {
+	font-family: var(--font-display);
+	font-size: 23px;
+	font-weight: 600;
+	text-align: center;
+	color: #fff;
 }
 
-@media (min-width: 48rem) {
-	.hrp-topbar {
-		display: none;
+.auth-sub {
+	margin: 6px 0 26px;
+	text-align: center;
+	color: var(--muted);
+	font-size: 14.5px;
+}
+
+.auth-forgot {
+	margin-top: 18px;
+	text-align: center;
+	font-size: 14px;
+}
+
+.auth-alt {
+	margin-top: 22px;
+	padding-top: 20px;
+	border-top: 1px solid var(--border);
+	text-align: center;
+	color: var(--muted);
+	font-size: 14.5px;
+}
+
+.auth-forgot a,
+.auth-alt a {
+	font-weight: 600;
+}
+
+/* ---------------------------------------------------------------------------
+   Smaller screens: the sidebar becomes a slide-out drawer.
+   --------------------------------------------------------------------------- */
+
+@media (max-width: 1100px) {
+	.stats {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.stats-3 {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	.referral {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 18px;
 	}
 }
 
-/* ---------------------------------------------------------------------------
-   Auth screens. The forms use the .login-username / .login-password / .login-submit wrappers.
-   --------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+	.app {
+		grid-template-columns: minmax(0, 1fr);
+	}
 
-.hrp-auth-card {
-	padding: 40px 36px 32px;
-	max-width: 430px;
-	border-radius: 14px;
-	border: 1px solid var(--hw-border,#2d3b52);
-	box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
-}
+	.sidebar {
+		position: fixed;
+		inset: 0 auto 0 0;
+		z-index: 50;
+		width: 280px;
+		transform: translateX(-100%);
+		transition: transform 0.22s ease;
+		box-shadow: var(--shadow);
+	}
 
-.hrp-auth-logo {
-	text-align: center;
-	margin-bottom: 26px;
-}
+	.nav-toggle:checked ~ .sidebar {
+		transform: translateX(0);
+	}
 
-.hrp-auth-logo .hrp-logo-img {
-	max-width: 210px;
-}
+	.nav-toggle:checked ~ .backdrop {
+		display: block;
+		position: fixed;
+		inset: 0;
+		z-index: 40;
+		background: rgba(3, 7, 18, 0.6);
+	}
 
-.hrp-auth-card h2 {
-	text-align: center;
-	font-size: 23px;
-	line-height: 1.3;
-	margin: 0 0 6px;
-	color: var(--hw-text,#f1f5f9);
-}
-
-.hrp-auth-sub {
-	text-align: center;
-	color: var(--hw-text-muted,#94a3b8) !important;
-	font-size: 14.5px;
-	margin: 0 0 26px;
-}
-
-.hrp-auth-card .login-username,
-.hrp-auth-card .login-password {
-	margin-bottom: 18px;
-}
-
-.hrp-auth-card .login-username label,
-.hrp-auth-card .login-password label {
-	display: block;
-	margin-bottom: 7px;
-	font-size: 14px;
-	font-weight: 600;
-	color: var(--hw-text,#e2e8f0);
-}
-
-.hrp-auth-card input[type="text"],
-.hrp-auth-card input[type="email"],
-.hrp-auth-card input[type="password"],
-.hrp-auth-card input[type="date"],
-.hrp-auth-card input[type="tel"] {
-	height: 48px;
-	border-radius: 9px;
-	border-color: var(--hw-border,#2d3b52);
-	font-size: 15px;
-	transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.hrp-auth-card input:focus {
-	outline: none;
-	border-color: #2563eb;
-	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-}
-
-/* "Remember Me" ships as a checkbox and label jammed together. */
-.hrp-auth-card .login-remember {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	margin: 4px 0 22px;
-	font-size: 14px;
-	color: var(--hw-text-muted,#94a3b8);
-}
-
-.hrp-auth-card .login-remember label {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	margin: 0;
-	font-weight: 400;
-	cursor: pointer;
-}
-
-.hrp-auth-card .login-remember input {
-	width: auto;
-	height: auto;
-	margin: 0;
-}
-
-.hrp-auth-card .login-submit {
-	margin: 0;
-}
-
-.hrp-auth-card .login-submit input[type="submit"] {
-	width: 100%;
-	height: 48px;
-	padding: 0;
-	border-radius: 9px;
-	font-size: 15.5px;
-	letter-spacing: 0.01em;
-	transition: background 0.15s ease;
-}
-
-.hrp-auth-forgot {
-	text-align: center;
-	margin: 18px 0 0;
-	font-size: 14px;
-}
-
-.hrp-auth-alt {
-	text-align: center;
-	font-size: 14.5px;
-	color: var(--hw-text-muted,#94a3b8) !important;
-	margin: 22px 0 0;
-	padding-top: 20px;
-	border-top: 1px solid var(--hw-border,#2d3b52);
-}
-
-.hrp-auth-alt a,
-.hrp-auth-forgot a {
-	font-weight: 600;
-	text-decoration: none;
-}
-
-.hrp-auth-alt a:hover,
-.hrp-auth-forgot a:hover {
-	text-decoration: underline;
-}
-
-/* Registration carries twelve fields, so it needs the wider card and tighter
-   vertical rhythm than the login screen. */
-.hrp-auth-wide {
-	max-width: 780px;
-}
-
-.hrp-auth-wide .hrp-grid label {
-	margin-bottom: 0;
-	font-size: 14px;
-	font-weight: 600;
-	color: var(--hw-text,#e2e8f0);
-}
-
-.hrp-auth-wide .hrp-grid input {
-	margin-top: 7px;
-}
-
-.hrp-auth-wide .hrp-button {
-	width: 100%;
-	height: 48px;
-	border-radius: 9px;
-	font-size: 15.5px;
-}
-
-/* ---------------------------------------------------------------------------
-   Standalone pages: no site header or footer around the portal, so the shell
-   and the sign-in screens fill the window themselves.
-   --------------------------------------------------------------------------- */
-
-.hrp-shell {
-	min-height: 100vh;
-}
-
-.hrp-auth {
-	min-height: 100vh;
-	align-items: center;
-}
-
-@media (min-width: 48.01rem) {
-	.hrp-sidebar {
+	.topbar {
 		position: sticky;
 		top: 0;
-		height: 100vh;
-		overflow-y: auto;
+		z-index: 30;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		padding: 10px 16px;
+		background: rgba(11, 18, 32, 0.92);
+		backdrop-filter: blur(8px);
+		border-bottom: 1px solid var(--border);
+	}
+
+	.topbar .logo {
+		width: 120px;
+	}
+
+	.content {
+		padding: 22px 16px 40px;
+	}
+
+	.columns {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 0;
+	}
+
+	.page-date {
+		display: none;
+	}
+
+	.page-head h1 {
+		font-size: 22px;
 	}
 }
 
-.hrp-content {
-	padding: 28px;
-	max-width: 1100px;
-}
+@media (max-width: 640px) {
+	.stats,
+	.stats-3 {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 12px;
+	}
 
-.hrp-page-title {
-	font-size: 1.6em;
-	margin: 0 0 20px;
-}
+	.stat {
+		padding: 16px;
+	}
 
-.hrp-sidebar-brand a {
-	display: inline-block;
-}
+	.stat-value {
+		font-size: 21px;
+	}
 
-/* Log out is a form (it changes state), dressed as one of the nav links. */
-.hrp-nav form {
-	margin: 0;
-}
+	.referral {
+		padding: 20px;
+	}
 
-.hrp-nav-button {
-	display: block;
-	width: 100%;
-	padding: 12px 22px;
-	border: 0;
-	background: none;
-	color: #cbd5e1;
-	font: inherit;
-	font-size: 15px;
-	text-align: left;
-	cursor: pointer;
-}
+	.copy-field {
+		flex-direction: column;
+	}
 
-.hrp-nav-button:hover {
-	background: var(--hw-text-muted);
-	color: #ffffff;
-}
+	.form-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
 
-/* Fields inside the admin grids sit in the grid gap, not their own margin. */
-.hrp-card .hrp-grid label {
-	margin-bottom: 0;
-}
+	.card-head,
+	.card-body {
+		padding-left: 16px;
+		padding-right: 16px;
+	}
 
-.hrp-card .hrp-grid input,
-.hrp-card .hrp-grid select,
-.hrp-card label > input,
-.hrp-card label > select {
-	margin-top: 7px;
-}
+	.row {
+		padding-left: 16px;
+		padding-right: 16px;
+	}
 
-.hrp-card form > label {
-	margin-top: 14px;
-}
+	.feed {
+		padding-left: 16px;
+		padding-right: 16px;
+	}
 
-.hrp-pill-off {
-	background: #475569;
-}
+	.auth-card {
+		padding: 28px 20px 24px;
+	}
 
-.hrp-table-wide {
-	min-width: 860px;
-}
+	.form-foot .btn,
+	.btn-whatsapp {
+		width: 100%;
+	}
 
-.hrp-actions {
-	white-space: nowrap;
-	text-align: right;
-}
+	/* Short tables fit the screen instead of scrolling: drop the least
+	   important column. */
+	.table-fit {
+		min-width: 0;
+	}
 
-.hrp-actions form {
-	display: inline;
-	margin-left: 12px;
-}
+	.hide-sm {
+		display: none;
+	}
 
-.hrp-text-button {
-	padding: 0;
-	border: 0;
-	background: none;
-	color: #f87171;
-	font: inherit;
-	cursor: pointer;
-}
-
-.hrp-text-button:hover {
-	text-decoration: underline;
-}
-
-/* .hrp-card input[type="text"] outranks the copy field's own padding, which
-   let a long link run under the copy button on a phone. */
-.hrp-card .hrp-copy-field .hrp-copy-value {
-	padding-right: 46px;
-	text-overflow: ellipsis;
-}
-
-.hrp-list em {
-	margin-left: 8px;
-	font-style: normal;
-	white-space: nowrap;
+	.table th,
+	.table td {
+		padding-left: 16px;
+		padding-right: 16px;
+	}
 }

@@ -72,7 +72,8 @@ function page_dashboard() {
 		redirect( 'admin' );
 	}
 
-	$user = current_user();
+	$user   = current_user();
+	$levels = generations( $user['id'], 3 );
 
 	render(
 		'dashboard',
@@ -80,7 +81,8 @@ function page_dashboard() {
 			'user'       => $user,
 			'star'       => $user['premium_star_id'] ? find_user( $user['premium_star_id'] ) : null,
 			'total'      => total_earned( $user['id'] ),
-			'lines'      => generations( $user['id'], 1 )[1],
+			'lines'      => $levels[1],
+			'network'    => count( $levels[1] ) + count( $levels[2] ) + count( $levels[3] ),
 			'earnings'   => earnings( $user['id'] ),
 			'notices'    => notifications( $user['id'] ),
 			'properties' => properties(),

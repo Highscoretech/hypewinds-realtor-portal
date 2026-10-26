@@ -1,17 +1,14 @@
 <?php defined( 'PORTAL' ) || exit; ?>
 <?php auth_start( 'Reset your password', 'We will email you a link to choose a new one' ); ?>
 
-<form method="post" action="<?php echo e( url( 'forgot' ) ); ?>">
+<form method="post" action="<?php echo e( url( 'forgot' ) ); ?>" class="form">
 	<?php echo csrf_field(); ?>
-	<p class="login-username">
-		<label for="email">Email</label>
-		<input type="email" name="email" id="email" autocomplete="username" required autofocus>
-	</p>
-	<p class="login-submit">
-		<input type="submit" value="Send reset link">
-	</p>
+	<label class="field"><span>Email</span>
+		<input class="input" type="email" name="email" id="email" autocomplete="username" required autofocus>
+	</label>
+	<button class="btn btn-primary btn-block" type="submit">Send reset link</button>
 </form>
 
-<p class="hrp-auth-alt">Remembered it? <a href="<?php echo e( url( 'login' ) ); ?>">Back to login</a></p>
+<p class="auth-alt">Remembered it? <a href="<?php echo e( url( 'login' ) ); ?>">Back to sign in</a></p>
 
 <?php auth_end(); ?>
