@@ -41,8 +41,8 @@ function send_mail( $to, $subject, $body ) {
 }
 
 /**
- * A minimal SMTP client: EHLO, STARTTLS when offered, AUTH LOGIN, one
- * message. Enough for the server's own mail system, without pulling in a
+ * A minimal SMTP client: EHLO, STARTTLS when offered, AUTH LOGIN when a user
+ * is configured, one message. Enough for the server's own mail system, without pulling in a
  * library.
  *
  * @throws RuntimeException On any refusal, with the server's reply.
@@ -94,9 +94,13 @@ function smtp_send( $to, $subject, $body ) {
 			$talk( 'EHLO ' . $me, array( 250 ) );
 		}
 
-		$talk( 'AUTH LOGIN', array( 334 ) );
-		$talk( base64_encode( $c['user'] ), array( 334 ) );
-		$talk( base64_encode( $c['password'] ), array( 235 ) );
+		// The live server's own mail service takes mail from the site over
+		// loopback without a login, so a mailbox login is optional.
+		if ( ! empty( $c['user'] ) ) {
+			$talk( 'AUTH LOGIN', array( 334 ) );
+			$talk( base64_encode( $c['user'] ), array( 334 ) );
+			$talk( base64_encode( $c['password'] ), array( 235 ) );
+		}
 
 		$talk( 'MAIL FROM:<' . $from . '>', array( 250 ) );
 		$talk( 'RCPT TO:<' . $to . '>', array( 250, 251 ) );
