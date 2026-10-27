@@ -79,6 +79,7 @@ function username_taken( $name ) {
 	return (bool) q( 'SELECT 1 FROM portal_users WHERE username = ? LIMIT 1', array( $name ) )->fetchColumn();
 }
 
+
 /** Six digits, the CID format members are given. */
 function generate_ref_code() {
 	do {
@@ -124,6 +125,8 @@ function register_member( array $in ) {
 		return 'An account with that email already exists.';
 	}
 
+	$username = generate_username( $email );
+
 	$star = '' !== $ref ? find_by_ref_code( $ref ) : null;
 	if ( '' !== $ref && ! $star ) {
 		return 'That referral link is not valid.';
@@ -141,7 +144,7 @@ function register_member( array $in ) {
 		'role'            => 'realtor',
 		'full_name'       => mb_substr( $full_name, 0, 190 ),
 		'email'           => $email,
-		'username'        => generate_username( $email ),
+		'username'        => $username,
 		'password_hash'   => password_hash( $password, PASSWORD_DEFAULT ),
 		'ref_code'        => $code,
 		'premium_star_id' => $star ? (int) $star['id'] : null,

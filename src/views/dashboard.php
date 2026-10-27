@@ -29,6 +29,8 @@ shell_start( 'Welcome back, ' . $first, $user, '', 'Here is how your realtor net
 		<span class="stat-icon is-red"><?php echo icon( 'id' ); ?></span>
 		<span class="stat-label">Your CID</span>
 		<strong class="stat-value stat-code"><?php echo e( $user['ref_code'] ); ?></strong>
+		<?php // Shown here because it is a sign-in detail the member has nowhere else to look up. ?>
+		<span class="stat-foot">Username: <strong><?php echo e( $user['username'] ); ?></strong></span>
 	</div>
 </section>
 
