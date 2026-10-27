@@ -54,6 +54,7 @@ $routes = array(
 	'admin/properties' => 'page_admin_properties',
 	'admin/settings'   => 'page_admin_settings',
 	'setup'            => 'page_setup',
+	'migrate'          => 'page_migrate',
 );
 
 if ( ! isset( $routes[ $path ] ) ) {
@@ -340,6 +341,27 @@ function page_admin_settings() {
    Locked behind the setup key from config.php, and gone for good once an
    admin exists, so it cannot be used to take over a running portal.
    --------------------------------------------------------------------------- */
+
+/**
+ * Applies schema changes to an install that already has an admin.
+ *
+ * /setup closes itself once an admin exists, so a column added after launch
+ * would otherwise need a hand-written ALTER on the server. Guarded by the
+ * same setup key, and safe to open twice: the migration checks before it
+ * changes anything.
+ */
+function page_migrate() {
+	$key = (string) config( 'setup_key' );
+	if ( strlen( $key ) < 20 || ! hash_equals( $key, (string) ( $_GET['key'] ?? '' ) ) ) {
+		not_found();
+	}
+
+	migrate_schema();
+
+	header( 'Content-Type: text/plain; charset=utf-8' );
+	echo "Schema is up to date.\n";
+	exit;
+}
 
 function page_setup() {
 	$key = (string) config( 'setup_key' );
