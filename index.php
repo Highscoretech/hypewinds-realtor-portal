@@ -362,6 +362,8 @@ function page_setup() {
 		}
 	}
 
+	migrate_schema();
+
 	if ( is_post() ) {
 		check_csrf( 'setup', array( 'key' => $key ) );
 		$name     = input( 'full_name' );

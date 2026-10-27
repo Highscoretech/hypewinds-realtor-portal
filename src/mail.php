@@ -164,6 +164,7 @@ function send_welcome( array $user, $password ) {
 				'details_title' => 'Your login details',
 				'details'       => array(
 					'CID (User ID)' => $user['ref_code'],
+					'Username'      => $user['username'],
 					'Email'         => $user['email'],
 					'Password'      => $password,
 				),

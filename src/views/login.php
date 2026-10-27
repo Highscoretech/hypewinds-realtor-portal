@@ -3,10 +3,10 @@
 
 <form method="post" action="<?php echo e( url( 'login' ) ); ?>" class="form">
 	<?php echo csrf_field(); ?>
-	<?php // type="text", not "email": the CID from the welcome email is valid here too. ?>
-	<label class="field"><span>Email or CID</span>
-		<input class="input" type="text" name="email" id="email" value="<?php echo e( $email ); ?>" autocomplete="username" placeholder="you@example.com or 123456" required autofocus>
-		<small class="hint">Your CID is the six-digit number in your welcome email.</small>
+	<?php // type="text", not "email": a username or CID is valid here too. ?>
+	<label class="field"><span>Email, username or CID</span>
+		<input class="input" type="text" name="email" id="email" value="<?php echo e( $email ); ?>" autocomplete="username" placeholder="Email, username or CID" required autofocus>
+		<small class="hint">All three are in your welcome email. The CID is the six-digit number.</small>
 	</label>
 	<label class="field"><span>Password</span>
 		<input class="input" type="password" name="password" id="password" autocomplete="current-password" required>

@@ -5,6 +5,8 @@ CREATE TABLE IF NOT EXISTS portal_users (
 	role ENUM('realtor','admin') NOT NULL DEFAULT 'realtor',
 	full_name VARCHAR(190) NOT NULL,
 	email VARCHAR(190) NOT NULL,
+	-- Sign-in name, generated from the email at registration.
+	username VARCHAR(60) NULL,
 	password_hash VARCHAR(255) NOT NULL,
 	-- Six-digit CID, also the referral code. Admins have none.
 	ref_code CHAR(6) NULL,
@@ -26,6 +28,7 @@ CREATE TABLE IF NOT EXISTS portal_users (
 	UNIQUE KEY email (email),
 	UNIQUE KEY ref_code (ref_code),
 	KEY premium_star_id (premium_star_id),
+	UNIQUE KEY uq_users_username (username),
 	CONSTRAINT fk_users_star FOREIGN KEY (premium_star_id) REFERENCES portal_users (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

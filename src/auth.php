@@ -50,18 +50,27 @@ function find_user_by_email( $email ) {
 }
 
 /**
- * A realtor signs in with either their email or the six-digit CID from their
- * welcome email, which is the only identifier most of them keep to hand.
+ * A realtor signs in with any of the three identifiers their welcome email
+ * gives them: email address, username, or the six-digit CID.
  */
 function find_user_by_login( $login ) {
-	$login = trim( $login );
+	$login = strtolower( trim( $login ) );
+
+	if ( '' === $login ) {
+		return null;
+	}
 
 	if ( preg_match( '/^\d{6}$/', $login ) ) {
 		$row = q( 'SELECT * FROM portal_users WHERE ref_code = ?', array( $login ) )->fetch();
 		return $row ? $row : null;
 	}
 
-	return find_user_by_email( $login );
+	if ( false !== strpos( $login, '@' ) ) {
+		return find_user_by_email( $login );
+	}
+
+	$row = q( 'SELECT * FROM portal_users WHERE username = ?', array( $login ) )->fetch();
+	return $row ? $row : null;
 }
 
 /**

@@ -30,6 +30,55 @@ function find_by_ref_code( $code ) {
 	return $row ? $row : null;
 }
 
+/**
+ * Brings an older database up to date.
+ *
+ * schema.sql only creates tables that are missing, so a column added after an
+ * install was made would never appear there. Run from setup, and safe to run
+ * again: it checks before it changes anything.
+ */
+function migrate_schema() {
+	$has_username = (bool) q(
+		'SELECT 1 FROM information_schema.COLUMNS
+		  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ? LIMIT 1',
+		array( 'portal_users', 'username' )
+	)->fetchColumn();
+
+	if ( ! $has_username ) {
+		db()->exec( 'ALTER TABLE portal_users ADD COLUMN username VARCHAR(60) NULL AFTER email' );
+		db()->exec( 'ALTER TABLE portal_users ADD UNIQUE KEY uq_users_username (username)' );
+	}
+
+	// Anyone registered before the column existed still needs a name to sign
+	// in with.
+	foreach ( q( 'SELECT id, email FROM portal_users WHERE username IS NULL OR username = ""' )->fetchAll() as $row ) {
+		q( 'UPDATE portal_users SET username = ? WHERE id = ?', array( generate_username( $row['email'] ), $row['id'] ) );
+	}
+}
+
+/**
+ * A sign-in name taken from the email, e.g. ada.okoye@gmail.com -> adaokoye.
+ *
+ * Members are not asked to invent one at registration: it is one more thing
+ * to choose and forget. A digit is appended when the name is taken.
+ */
+function generate_username( $email ) {
+	$base = strtolower( (string) strstr( $email . '@', '@', true ) );
+	$base = preg_replace( '/[^a-z0-9]/', '', $base );
+	$base = '' === $base ? 'realtor' : mb_substr( $base, 0, 50 );
+
+	$name = $base;
+	for ( $n = 2; username_taken( $name ); $n++ ) {
+		$name = $base . $n;
+	}
+
+	return $name;
+}
+
+function username_taken( $name ) {
+	return (bool) q( 'SELECT 1 FROM portal_users WHERE username = ? LIMIT 1', array( $name ) )->fetchColumn();
+}
+
 /** Six digits, the CID format members are given. */
 function generate_ref_code() {
 	do {
@@ -92,6 +141,7 @@ function register_member( array $in ) {
 		'role'            => 'realtor',
 		'full_name'       => mb_substr( $full_name, 0, 190 ),
 		'email'           => $email,
+		'username'        => generate_username( $email ),
 		'password_hash'   => password_hash( $password, PASSWORD_DEFAULT ),
 		'ref_code'        => $code,
 		'premium_star_id' => $star ? (int) $star['id'] : null,
