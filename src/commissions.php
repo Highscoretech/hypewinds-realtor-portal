@@ -141,11 +141,21 @@ function find_property( $id ) {
 function save_property( array $in, $id = 0 ) {
 	$name   = trim( $in['name'] ?? '' );
 	$price  = trim( str_replace( ',', '', $in['price'] ?? '' ) );
-	$status = in_array( $in['status'] ?? '', property_statuses(), true ) ? $in['status'] : 'Available';
+	$status = trim( $in['status'] ?? '' );
 	$link   = trim( $in['url'] ?? '' );
+
+	// A new property with no status given takes the default; an edit that sends
+	// an unknown one is refused rather than quietly reset, which would turn a
+	// sold-out listing back into an available one without anyone noticing.
+	if ( '' === $status && ! $id ) {
+		$status = 'Available';
+	}
 
 	if ( '' === $name ) {
 		return 'Give the property a name.';
+	}
+	if ( ! in_array( $status, property_statuses(), true ) ) {
+		return 'Choose a status from the list.';
 	}
 	if ( '' !== $price && ( ! is_numeric( $price ) || $price < 0 ) ) {
 		return 'The price must be a number.';
