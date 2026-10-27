@@ -32,6 +32,21 @@ return array(
 		'password' => '',
 	),
 
+	// The website's own database, read so realtors see the same listings the
+	// public does. Leave 'name' empty and the portal falls back to the
+	// properties kept in its own admin area.
+	//
+	// A read-only user is enough, and safer: the portal only ever selects.
+	'website' => array(
+		'host'      => 'localhost',
+		'name'      => '',
+		'user'      => '',
+		'password'  => '',
+		// Checked against the tables that exist, and worked out if it is wrong.
+		'prefix'    => 'wp_',
+		'post_type' => 'property',
+	),
+
 	'site_name'  => 'Hypewinds Properties',
 	'site_url'   => 'https://hypewindsproperties.com',
 	'currency'   => "\u{20A6}", // The naira sign, as an escape so this file stays plain ASCII.
