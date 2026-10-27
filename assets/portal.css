@@ -1251,3 +1251,12 @@ select.input {
 		padding-right: 16px;
 	}
 }
+
+/* Small note under a field, e.g. explaining that the CID also signs you in. */
+.field .hint {
+	display: block;
+	margin-top: 6px;
+	font-size: 13px;
+	line-height: 1.4;
+	color: #6b7280;
+}

@@ -50,6 +50,21 @@ function find_user_by_email( $email ) {
 }
 
 /**
+ * A realtor signs in with either their email or the six-digit CID from their
+ * welcome email, which is the only identifier most of them keep to hand.
+ */
+function find_user_by_login( $login ) {
+	$login = trim( $login );
+
+	if ( preg_match( '/^\d{6}$/', $login ) ) {
+		$row = q( 'SELECT * FROM portal_users WHERE ref_code = ?', array( $login ) )->fetch();
+		return $row ? $row : null;
+	}
+
+	return find_user_by_email( $login );
+}
+
+/**
  * Too many recent failures for this address or this IP. Counted per email so
  * one account cannot be guessed at, and per IP so many accounts cannot be
  * sprayed from one place.
@@ -71,23 +86,23 @@ function login_throttled( $email ) {
 }
 
 /** @return array|string The user on success, or the error to show. */
-function attempt_login( $email, $password ) {
-	$email = strtolower( trim( $email ) );
+function attempt_login( $login, $password ) {
+	$login = strtolower( trim( $login ) );
 
-	if ( login_throttled( $email ) ) {
+	if ( login_throttled( $login ) ) {
 		return sprintf( 'Too many failed attempts. Please wait %d minutes and try again.', LOGIN_WINDOW_MINUTES );
 	}
 
-	$user = find_user_by_email( $email );
+	$user = find_user_by_login( $login );
 
-	// The same message whether the email or the password was wrong, so the
+	// The same message whether the login or the password was wrong, so the
 	// form cannot be used to find out who has an account.
 	if ( ! $user || ! password_verify( $password, $user['password_hash'] ) ) {
 		q(
 			'INSERT INTO portal_login_failures (email, ip, created_at) VALUES (?, ?, ?)',
-			array( $email, client_ip(), now() )
+			array( $login, client_ip(), now() )
 		);
-		return 'Wrong email or password.';
+		return 'Wrong login or password.';
 	}
 
 	if ( password_needs_rehash( $user['password_hash'], PASSWORD_DEFAULT ) ) {
@@ -104,7 +119,13 @@ function sign_in( array $user ) {
 	$_SESSION['user_id'] = (int) $user['id'];
 
 	q( 'UPDATE portal_users SET last_login_at = ? WHERE id = ?', array( now(), $user['id'] ) );
+
+	// Failures are recorded under whatever was typed, so clear the CID too or
+	// a member who mistyped their password while using it stays throttled.
 	q( 'DELETE FROM portal_login_failures WHERE email = ?', array( $user['email'] ) );
+	if ( ! empty( $user['ref_code'] ) ) {
+		q( 'DELETE FROM portal_login_failures WHERE email = ?', array( $user['ref_code'] ) );
+	}
 }
 
 function sign_out() {
