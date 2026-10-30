@@ -277,33 +277,9 @@ function page_admin_members() {
 function page_admin_properties() {
 	require_admin();
 
-	if ( is_post() ) {
-		check_csrf( 'admin/properties' );
-		$id = (int) ( $_POST['id'] ?? 0 );
-
-		if ( 'delete' === input( 'do' ) ) {
-			delete_property( $id );
-			flash( 'ok', 'Property removed.' );
-		} else {
-			$result = save_property( $_POST, $id );
-			if ( true !== $result ) {
-				flash( 'error', $result );
-				redirect( 'admin/properties', $id ? array( 'edit' => $id ) : array() );
-			}
-			flash( 'ok', $id ? 'Property updated.' : 'Property added.' );
-		}
-		redirect( 'admin/properties' );
-	}
-
-	$editing = isset( $_GET['edit'] ) ? find_property( (int) $_GET['edit'] ) : null;
-
-	render(
-		'admin/properties',
-		array(
-			'properties' => properties(),
-			'editing'    => $editing,
-		)
-	);
+	// Read-only: listings are added on the website, so there is one list, not
+	// two to keep in step. Any POST here is simply not accepted.
+	render( 'admin/properties', array( 'properties' => properties() ) );
 }
 
 function page_admin_settings() {
